@@ -1,5 +1,3 @@
 ﻿  MonsterChase.cpp
-C:\Users\jacob\UFiles\u1070198\MonsterChase\MonsterChase\MonsterChase.cpp(5,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jacob\UFiles\u1070198\MonsterChase\MonsterChase\MonsterChase.cpp(152,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\jacob\UFiles\u1070198\MonsterChase\MonsterChase\MonsterChase.cpp(26): warning C4172: returning address of local variable or temporary: playerInput
+C:\Users\jacob\UFiles\u1070198\MonsterChase\MonsterChase\MonsterChase.cpp(28): warning C4172: returning address of local variable or temporary: playerInput
   MonsterChase.vcxproj -> C:\Users\jacob\UFiles\u1070198\MonsterChase\x64\Debug\MonsterChase.exe

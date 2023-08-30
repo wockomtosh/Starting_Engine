@@ -2,7 +2,13 @@
 #include "Point2D.h";
 
 
-Point2D::Point2D(int i_x = 0, int i_y = 0)
+Point2D::Point2D()
+{
+	x = 0;
+	y = 0;
+}
+
+Point2D::Point2D(int i_x, int i_y)
 {
 	x = i_x;
 	y = i_y;
@@ -14,6 +20,11 @@ int Point2D::getY() { return y; }
 void Point2D::setX(int i_x) { x = i_x; }
 void Point2D::setY(int i_y) { y = i_y; }
 
+void Point2D::print()
+{
+	std::cout << "[" << x << ", " << y << "]";
+}
+
 Point2D Point2D::operator+=(Point2D other)
 {
 	x += other.x;
@@ -21,9 +32,14 @@ Point2D Point2D::operator+=(Point2D other)
 	return Point2D(x, y);
 }
 
-void Point2D::print()
+bool Point2D::operator!=(Point2D other)
 {
-	std::cout << "[" << x << ", " << y << "]";
+	return (y != other.getX() && y != other.getY());
+}
+
+bool Point2D::operator==(Point2D other)
+{
+	return (x == other.getX() && y == other.getY());
 }
 
 Point2D operator+(Point2D lhs, Point2D rhs)

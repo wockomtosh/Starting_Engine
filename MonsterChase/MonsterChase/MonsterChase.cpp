@@ -2,13 +2,15 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <time.h>
-#include "Point2D.h";
+#include "Point2D.h"
+#include "Monster.h"
 
 
 char* playerName;
-Point2D playerPos = Point2D(0, 0);
+Point2D playerPos = Point2D();
 int numMonsters;
-Point2D* monsterLocations;
+int totalMonsters;
+Monster* monsters;
 
 char getInputChar(const char* prompt)
 {
@@ -34,14 +36,12 @@ int getInputInt(const char* prompt)
     return playerInput;
 }
 
-void placeMonsters()
+void initMonsters()
 {
-    for (int i = 0; i < numMonsters; i++)
+    monsters = (Monster*)malloc(numMonsters * sizeof(Monster));
+    for (int i = 0; i < numMonsters; i++) 
     {
-        //for monster in list, get rand int and put it somewhere
-        int randx = rand() % 100 - 50;
-        int randy = rand() % 100 - 50;
-        monsterLocations[i] = Point2D(randx, randy);
+        monsters[i] = Monster("Monster", i);
     }
 }
 
@@ -49,47 +49,82 @@ void startGame()
 {
     playerName = getInputString("Enter Player Name: ");
     numMonsters = getInputInt("Enter Number of initial Monsters: ");
-    monsterLocations = (Point2D*) malloc(numMonsters * sizeof(Point2D));
-    placeMonsters();
-    //Init Monster Names
+    totalMonsters = numMonsters;
+    initMonsters();
+}
+
+template <typename T>
+T* appendToArray(T newValue, T* i_array, int i_arrayLength)
+{
+    //copy i_array over to new array with additional space
+    T* o_array = (T*)malloc(i_arrayLength + 1 * sizeof(T));
+    for (int i = 0; i < i_arrayLength; i++)
+    {
+        o_array[i] = i_array[i];
+    }
+    o_array[i_arrayLength] = newValue; //add the new value
+
+    //free(i_array);
+
+    return o_array;
+}
+
+template <typename T>
+T* removeFromArray(int removeIndex, T* i_array, int i_arrayLength) 
+{
+    //copy i_array over to new array with less space, don't copy over the removeValue
+    T* o_array = (T*)malloc((i_arrayLength - 1) * sizeof(T));
+    int o_location = 0; //We lose a space when we remove so we need to track the location in our new array
+    for (int i = 0; i < i_arrayLength; i++)
+    {
+        if (i != removeIndex) 
+        {
+            o_array[o_location] = i_array[i];
+            o_location++;
+        }
+    }
+
+    //free(i_array);
+
+    return o_array;
+}
+
+void removeMonster(int index)
+{
+    Monster* toDelete = &monsters[index];
+    monsters = removeFromArray(index, monsters, numMonsters);
+    numMonsters -= 1;
+    //delete toDelete;
+}
+
+void addMonster()
+{
+    monsters = appendToArray(Monster("Monster", totalMonsters), monsters, numMonsters);
+    numMonsters += 1;
+    totalMonsters += 1;
+}
+
+void addRemoveMonsters()
+{
+    //Remove monsters after a certain number of turns
+    //Start from the end and work backwards to not mess with the order of the arrays by removing during the loop
+    for (int i = numMonsters-1; i > -1; i--)
+    {
+        if (monsters[i].getDuration() >= monsters[i].getLifeSpan())
+        {
+            removeMonster(i);
+            //add a monster for each removed monster
+            addMonster();
+        }
+    }
 }
 
 void moveMonsters()
 {
     for (int i = 0; i < numMonsters; i++)
     {
-        //Choose x or y, pos or neg, add that to monster position
-        int xOrY = rand() % 2;
-        int posOrNeg = rand() % 2;
-        if (xOrY == 0) //this will be x
-        {
-            if (posOrNeg == 0) //this will be positive
-            {
-                monsterLocations[i].setX(monsterLocations[i].getX() + 1);
-            }
-            else
-            {
-                monsterLocations[i].setX(monsterLocations[i].getX() - 1);
-            }
-        }
-        else
-        {
-            if (posOrNeg == 0)
-            {
-                monsterLocations[i].setY(monsterLocations[i].getY() + 1);
-            }
-            else
-            {
-                monsterLocations[i].setY(monsterLocations[i].getY() - 1);
-            }
-        }
+        monsters[i].move();
     }
-}
-
-void addMonsters()
-{
-    //Have some counter that whenever it gets to a certain point we add a monster
-    //Remove monsters after a certain number of turns? 
 }
 
 void displayMonsters()
@@ -97,9 +132,7 @@ void displayMonsters()
     std::cout << std::endl;
     for (int i = 0; i < numMonsters; i++)
     {
-        //Print MonsterNames
-        monsterLocations[i].print();
-        std::cout << std::endl;
+        monsters[i].print();
     }
 }
 
@@ -110,7 +143,7 @@ void displayPlayer()
     std::cout << std::endl;
 }
 
-void queryPlayer(bool &playing)
+void queryPlayer()
 {
     char input = getInputChar("Use the WASD keys to move or Q to quit");
     switch (input)
@@ -129,28 +162,26 @@ void queryPlayer(bool &playing)
         playerPos.setX(playerPos.getX() + 1);
         break;
     case 'q':
-        playing = false;
+        exit(0);
         break;
     }
 }
 
 void mainLoop()
 {
-    bool playing = true;
-    while(playing)
+    while(true)
     {
-        addMonsters();
+        addRemoveMonsters();
         moveMonsters();
         displayMonsters();
         displayPlayer();
-        queryPlayer(playing);
+        queryPlayer();
     }
 }
 
 int main()
 {
     std::cout << "Starting Monster Chase" << std::endl;
-    srand(time(NULL));
 
     startGame();
     mainLoop();
