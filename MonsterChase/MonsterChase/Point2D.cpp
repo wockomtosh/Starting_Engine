@@ -1,41 +1,37 @@
 #include <iostream>
+#include "Point2D.h";
 
-class Point2D 
+
+Point2D::Point2D(int i_x = 0, int i_y = 0)
 {
-	int x;
-	int y;
+	x = i_x;
+	y = i_y;
+}
 
-public:	
-	Point2D(int i_x = 0, int i_y = 0)
-	{
-		x = i_x;
-		y = i_y;
-	}
+int Point2D::getX() { return x; }
+int Point2D::getY() { return y; }
 
-	int x() { return x; }
-	int y() { return y; }
+void Point2D::setX(int i_x) { x = i_x; }
+void Point2D::setY(int i_y) { y = i_y; }
 
-	void x(int i_x) { x = i_x; }
-	void y(int i_y) { y = i_y; }
+Point2D Point2D::operator+=(Point2D other)
+{
+	x += other.x;
+	y += other.y;
+	return Point2D(x, y);
+}
 
-	Point2D operator+=(Point2D other)
-	{
-		x += other.x;
-		y += other.y;
-	}
-
-	void print()
-	{
-		std::cout << "[" << x << ", " << y << "]";
-	}
-};
+void Point2D::print()
+{
+	std::cout << "[" << x << ", " << y << "]";
+}
 
 Point2D operator+(Point2D lhs, Point2D rhs)
 {
-	return Point2D(lhs.x() + rhs.x(), lhs.x() + rhs.x());
+	return Point2D(lhs.getX() + rhs.getX(), lhs.getY() + rhs.getY());
 }
 
 Point2D operator-(Point2D lhs, Point2D rhs)
 {
-	return Point2D(lhs.x() - rhs.x(), lhs.y() - rhs.y());
+	return Point2D(lhs.getX() - rhs.getX(), lhs.getY() - rhs.getY());
 }
