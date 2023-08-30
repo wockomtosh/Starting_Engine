@@ -1,3 +1,2 @@
-﻿  MonsterChase.cpp
-C:\Users\jacob\UFiles\u1070198\MonsterChase\MonsterChase\MonsterChase.cpp(28): warning C4172: returning address of local variable or temporary: playerInput
+﻿  Monster.cpp
   MonsterChase.vcxproj -> C:\Users\jacob\UFiles\u1070198\MonsterChase\x64\Debug\MonsterChase.exe
