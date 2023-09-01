@@ -22,7 +22,7 @@ char getInputChar(const char* prompt)
 
 char* getInputString(const char* prompt)
 {
-    char* playerInput = (char*) calloc(20, sizeof(char));
+    char* playerInput = (char*) calloc(100, sizeof(char));
     std::cout << prompt;
     std::cin >> playerInput;
     //Check for the length of the player input and reduce the size accordingly
@@ -100,6 +100,7 @@ T* appendToArray(T newValue, T* i_array, int i_arrayLength)
     }
 
     //free(i_array);
+    delete i_array;
 
     return o_array;
 }
@@ -126,6 +127,7 @@ T* removeFromArray(int removeIndex, T* i_array, int i_arrayLength)
     }
 
     //free(i_array);
+    delete i_array;
 
     return o_array;
 }
