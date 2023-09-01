@@ -22,9 +22,34 @@ char getInputChar(const char* prompt)
 
 char* getInputString(const char* prompt)
 {
-    char playerInput[20];
+    char* playerInput = (char*) calloc(20, sizeof(char));
     std::cout << prompt;
     std::cin >> playerInput;
+    //Check for the length of the player input and reduce the size accordingly
+    //Get the length
+    char curChar = NULL;
+    if (playerInput != NULL) //To get rid of warning
+    {
+        curChar = playerInput[0];
+    }
+    int length = 0;
+    while (curChar != NULL)
+    {
+        length += 1;
+        curChar = playerInput[length];
+    }
+    //We need to have an extra space for a terminating null character
+    length += 1;
+    //Allocate less space for the input
+    char* trimmedPlayerInput = (char*) calloc(length, sizeof(char));
+    //copy over the input. Because of calloc the final char will be null
+    for (int i = 0; i < length - 1; i++)
+    {
+        if(trimmedPlayerInput != NULL) //To get rid of warning
+        {
+            trimmedPlayerInput[i] = playerInput[i];
+        }
+    }
     return playerInput;
 }
 
@@ -41,7 +66,10 @@ void initMonsters()
     monsters = (Monster*)malloc(numMonsters * sizeof(Monster));
     for (int i = 0; i < numMonsters; i++) 
     {
-        monsters[i] = Monster("Monster", i);
+        if (monsters != NULL)
+        {
+            monsters[i] = Monster("Monster", i);
+        }
     }
 }
 
@@ -57,12 +85,19 @@ template <typename T>
 T* appendToArray(T newValue, T* i_array, int i_arrayLength)
 {
     //copy i_array over to new array with additional space
-    T* o_array = (T*)malloc(i_arrayLength + 1 * sizeof(T));
+    T* o_array = (T*)malloc((i_arrayLength + 1) * sizeof(T));
     for (int i = 0; i < i_arrayLength; i++)
     {
-        o_array[i] = i_array[i];
+        if (o_array != NULL)
+        {
+            o_array[i] = i_array[i];
+        }
     }
-    o_array[i_arrayLength] = newValue; //add the new value
+    if (o_array != NULL)
+    {
+        //NULL check removes a warning
+        o_array[i_arrayLength] = newValue; //add the new value
+    }
 
     //free(i_array);
 
@@ -73,13 +108,19 @@ template <typename T>
 T* removeFromArray(int removeIndex, T* i_array, int i_arrayLength) 
 {
     //copy i_array over to new array with less space, don't copy over the removeValue
-    T* o_array = (T*)malloc((i_arrayLength - 1) * sizeof(T));
+    //If the remove value isn't in the array, this will remove the final value in the array because that gets cut off. There isn't a check for the remove value.
+    int newLength = i_arrayLength - 1; //This lets us get rid of a compiler warning.
+    T* o_array = (T*)malloc(newLength * sizeof(T));
     int o_location = 0; //We lose a space when we remove so we need to track the location in our new array
     for (int i = 0; i < i_arrayLength; i++)
     {
-        if (i != removeIndex) 
+        if (i != removeIndex && o_location < newLength)
         {
-            o_array[o_location] = i_array[i];
+            if (o_array != NULL)
+            {
+                //NULL check removes a warnings
+                o_array[o_location] = i_array[i];
+            }
             o_location++;
         }
     }
@@ -94,7 +135,6 @@ void removeMonster(int index)
     Monster* toDelete = &monsters[index];
     monsters = removeFromArray(index, monsters, numMonsters);
     numMonsters -= 1;
-    //delete toDelete;
 }
 
 void addMonster()
