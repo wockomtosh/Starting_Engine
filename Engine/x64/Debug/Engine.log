@@ -1,2 +1,7 @@
-﻿MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
-C:\Users\jacob\UFiles\u1070198\MonsterChase\x64\Debug\Engine.exe : fatal error LNK1120: 1 unresolved externals
+﻿  GameObject.cpp
+  Point2D.cpp
+C:\Users\jacob\UFiles\u1070198\MonsterChase\MonsterChase\Point2D.cpp(2,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  ArrayUtils.cpp
+  Input.cpp
+  Generating Code...
+  Engine.vcxproj -> C:\Users\jacob\UFiles\u1070198\MonsterChase\x64\Debug\Engine.lib
