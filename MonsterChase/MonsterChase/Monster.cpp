@@ -43,22 +43,22 @@ void Monster::move()
     {
         if (posOrNeg == 0) //this will be positive
         {
-            setLocation(getLocation() + Point2D(1, 0));
+            setLocation(getLocation() + Point2D::Right);
         }
         else
         {
-            setLocation(getLocation() + Point2D(-1, 0));
+            setLocation(getLocation() + Point2D::Left);
         }
     }
     else
     {
         if (posOrNeg == 0)
         {
-            setLocation(getLocation() + Point2D(0, 1));
+            setLocation(getLocation() + Point2D::Up);
         }
         else
         {
-            setLocation(getLocation() + Point2D(0, -1));
+            setLocation(getLocation() + Point2D::Down);
         }
     }
     //Increase the amount of time the monster has been alive

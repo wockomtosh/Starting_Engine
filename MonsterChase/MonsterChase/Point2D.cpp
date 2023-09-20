@@ -32,6 +32,27 @@ Point2D Point2D::operator+=(Point2D other)
 	return Point2D(x, y);
 }
 
+Point2D Point2D::operator-=(Point2D other)
+{
+	x -= other.x;
+	y -= other.y;
+	return Point2D(x, y);
+}
+
+Point2D Point2D::operator*=(Point2D other)
+{
+	x *= other.x;
+	y *= other.y;
+	return Point2D(x, y);
+}
+
+Point2D Point2D::operator/=(Point2D other)
+{
+	x /= other.x;
+	y /= other.y;
+	return Point2D(x, y);
+}
+
 bool Point2D::operator!=(Point2D other)
 {
 	return (y != other.getX() && y != other.getY());
@@ -51,3 +72,18 @@ Point2D operator-(Point2D lhs, Point2D rhs)
 {
 	return Point2D(lhs.getX() - rhs.getX(), lhs.getY() - rhs.getY());
 }
+
+Point2D operator*(Point2D lhs, Point2D rhs)
+{
+	return Point2D(lhs.getX() * rhs.getX(), lhs.getY() * rhs.getY());
+}
+
+Point2D operator/(Point2D lhs, Point2D rhs)
+{
+	return Point2D(lhs.getX() / rhs.getX(), lhs.getY() / rhs.getY());
+}
+
+const Point2D Point2D::Up = Point2D(0, 1);
+const Point2D Point2D::Down = Point2D(0, -1);
+const Point2D Point2D::Left = Point2D(-1, 0);
+const Point2D Point2D::Right = Point2D(1, 0);

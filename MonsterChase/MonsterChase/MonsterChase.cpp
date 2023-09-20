@@ -142,16 +142,16 @@ void queryPlayer()
     {
     case 'w':
         //move player up
-        playerPos.setY(playerPos.getY() + 1);
+        playerPos += Point2D::Up;
         break;
     case 'a':
-        playerPos.setX(playerPos.getX() - 1);
+        playerPos += Point2D::Left;
         break;
     case 's':
-        playerPos.setY(playerPos.getY() - 1);
+        playerPos += Point2D::Down;
         break;
     case 'd':
-        playerPos.setX(playerPos.getX() + 1);
+        playerPos += Point2D::Right;
         break;
     case 'q':
         exit(0);
