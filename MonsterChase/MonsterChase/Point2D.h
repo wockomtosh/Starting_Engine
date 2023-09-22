@@ -20,6 +20,9 @@ public:
 	Point2D operator-=(Point2D other);
 	Point2D operator*=(Point2D other);
 	Point2D operator/=(Point2D other);
+	Point2D operator*=(int other);
+	Point2D operator/=(int other);
+	Point2D operator-();
 	bool operator!=(Point2D other);
 	bool operator==(Point2D other);
 
@@ -35,3 +38,6 @@ Point2D operator+(Point2D lhs, Point2D rhs);
 Point2D operator-(Point2D lhs, Point2D rhs);
 Point2D operator*(Point2D lhs, Point2D rhs);
 Point2D operator/(Point2D lhs, Point2D rhs);
+Point2D operator*(Point2D lhs, int rhs);
+Point2D operator*(int lhs, Point2D rhs);
+Point2D operator/(Point2D lhs, int rhs);
