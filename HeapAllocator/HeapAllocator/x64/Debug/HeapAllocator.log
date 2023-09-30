@@ -1,0 +1,18 @@
+﻿  HeapAllocator.cpp
+  HeapManagerProxy.cpp
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.h(1,9): warning C4068: unknown pragma 'onece'
+  HeapManager_UnitTest.cpp
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.h(1,9): warning C4068: unknown pragma 'onece'
+  Main.cpp
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.h(1,9): warning C4068: unknown pragma 'onece'
+  Generating Code...
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(19): error C4716: 'HeapManagerProxy::CreateHeapManager': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(43): error C4716: 'HeapManagerProxy::free': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(31): error C4716: 'HeapManagerProxy::alloc': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(37): error C4716: 'HeapManagerProxy::alloc': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(62): error C4716: 'HeapManagerProxy::IsAllocated': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(56): error C4716: 'HeapManagerProxy::Contains': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(68): error C4716: 'HeapManagerProxy::GetLargestFreeBlock': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManagerProxy.cpp(74): error C4716: 'HeapManagerProxy::GetTotalFreeMemory': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapAllocator.cpp(185): error C4716: 'freeBlock': must return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapAllocator.cpp(173): warning C4715: 'removeOutstandingBlock': not all control paths return a value
