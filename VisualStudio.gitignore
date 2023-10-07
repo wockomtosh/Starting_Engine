@@ -37,6 +37,9 @@ bld/
 
 MonsterChase/.vs/
 MonsterChase/x64/
+HeapAllocator/.vs/
+HeapAllocator/x64/
+HeapAllocator/HeapAllocator/x64/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <vector>
 
-#define SUPPORTS_ALIGNMENT
-#define SUPPORTS_SHOWFREEBLOCKS
-#define SUPPORTS_SHOWOUTSTANDINGALLOCATIONS
+//#define SUPPORTS_ALIGNMENT
+//#define SUPPORTS_SHOWFREEBLOCKS
+//#define SUPPORTS_SHOWOUTSTANDINGALLOCATIONSa
 
 bool HeapManager_UnitTest()
 {
@@ -261,5 +261,6 @@ bool unitTest()
 int main()
 {
     std::cout << "Starting HeapAllocator...\n";
-    std::cout << unitTest() << '\n';
+	bool unitTestValue = unitTest();
+    std::cout << unitTestValue << '\n';
 }
