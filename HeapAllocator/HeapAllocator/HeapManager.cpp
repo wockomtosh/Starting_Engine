@@ -47,7 +47,6 @@ void HeapManager::initMemoryBlocks(void* blocksMemory, size_t blocksMemorySize) 
 
 void HeapManager::trackAlloc(MemoryBlock* block) {
     //Put the memory block into the outstanding list
-
     //Puts each outstanding block in front of the last
     block->nextBlock = outstandingBlocks;
     outstandingBlocks = block;
@@ -63,12 +62,24 @@ HeapManager::MemoryBlock* HeapManager::findFirstFittingFreeBlock(size_t i_size) 
     return freeBlock;
 }
 
+int HeapManager::getBlockListSize() {
+    MemoryBlock* curBlock = blockList;
+    int counter = 0;
+    while (curBlock != nullptr) {
+        counter++;
+        curBlock = curBlock->nextBlock;
+    }
+    return counter;
+}
+
 HeapManager::MemoryBlock* HeapManager::getFreeMemoryBlock() {
     //Get a free memory block struct from the list that was initialized at the beginning
     assert(blockList != nullptr);
 
     MemoryBlock* returnBlock = blockList;
     blockList = blockList->nextBlock;
+
+    //std::cout << getBlockListSize() << "\n";
 
     return returnBlock;
 }
@@ -81,6 +92,8 @@ void HeapManager::returnMemoryBlock(MemoryBlock* block) {
     block->nextBlock = blockList;
 
     blockList = block;
+
+    //std::cout << getBlockListSize() << "\n";
 }
 
 void HeapManager::Collect() {
@@ -157,7 +170,7 @@ void* HeapManager::alloc(size_t i_size, unsigned int alignment) {
         removeFromFreeList(freeBlock);
     }
 
-    std::cout << block->baseAddress << "\n";
+    //std::cout << block->baseAddress << "\n";
     return block->baseAddress;
 }
 
@@ -192,7 +205,7 @@ HeapManager::MemoryBlock* HeapManager::removeOutstandingBlock(void* i_ptr) {
 
 void HeapManager::freeBlock(void* i_ptr) {
     MemoryBlock* block = removeOutstandingBlock(i_ptr);
-    assert(block);
+    assert(block != nullptr);
 
     //As long as I put things in the right order I shouldn't need to coalesce more than once
     //I can also coalesce on insertion into the free list if I want, but I think coalescing in alloc works fine

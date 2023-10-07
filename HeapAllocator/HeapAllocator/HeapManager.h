@@ -19,6 +19,7 @@ class HeapManager
 	void returnMemoryBlock(MemoryBlock* block);
 	void removeFromFreeList(MemoryBlock* emptyFreeBlock);
 	MemoryBlock* removeOutstandingBlock(void* i_ptr);
+	int getBlockListSize();
 
 
 public:

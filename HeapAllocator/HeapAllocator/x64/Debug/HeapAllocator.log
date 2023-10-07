@@ -1,5 +1,3 @@
 ﻿  HeapManager.cpp
-  Main.cpp
-  Generating Code...
-C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManager.cpp(191): warning C4715: 'HeapManager::removeOutstandingBlock': not all control paths return a value
+C:\Users\jacob\UFiles\u1070198\HeapAllocator\HeapAllocator\HeapManager.cpp(204): warning C4715: 'HeapManager::removeOutstandingBlock': not all control paths return a value
   HeapAllocator.vcxproj -> C:\Users\jacob\UFiles\u1070198\HeapAllocator\x64\Debug\HeapAllocator.exe
