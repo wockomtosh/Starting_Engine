@@ -262,5 +262,5 @@ int main()
 {
     std::cout << "Starting HeapAllocator...\n";
 	bool unitTestValue = unitTest();
-    std::cout << unitTestValue << '\n';
+    std::cout << "Unit test value (1 for pass and 0 for fail): " << unitTestValue << '\n';
 }

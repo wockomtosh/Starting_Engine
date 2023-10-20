@@ -12,6 +12,7 @@ class HeapManager
 	MemoryBlock* outstandingBlocks;
 	MemoryBlock* blockList;
 
+
 	void initMemoryBlocks(void* blocksMemory, size_t blocksMemorySize);
 	void trackAlloc(MemoryBlock* block);
 	MemoryBlock* findFirstFittingFreeBlock(size_t i_size);
@@ -19,7 +20,9 @@ class HeapManager
 	void returnMemoryBlock(MemoryBlock* block);
 	void removeFromFreeList(MemoryBlock* emptyFreeBlock);
 	MemoryBlock* removeOutstandingBlock(void* i_ptr);
-	int getBlockListSize();
+	void insertFreedBlock(MemoryBlock* block);
+	int getListSize(MemoryBlock* list);
+	bool detectLoop(MemoryBlock* list);
 
 
 public:

@@ -3,10 +3,7 @@
 #include "HeapManager.h"
 
 HeapManager::HeapManager(void* heapMemory, size_t heapSize, unsigned int numDescriptors) {
-    //Have a reference to the heap
     //TODO: Make sure the heap is 4-byte aligned to start
-    //heap->baseAddress = heapMemory;
-    //heap->blockSize = heapSize;
 
     //Split off a chunk of the heap for memory blocks
     void* blockMemory = heapMemory;
@@ -20,6 +17,7 @@ HeapManager::HeapManager(void* heapMemory, size_t heapSize, unsigned int numDesc
     freeBlocks = getFreeMemoryBlock();
     freeBlocks->baseAddress = (MemoryBlock*)heapMemory + numDescriptors; //Move the pointer forward however many memory blocks we're given
     freeBlocks->blockSize = heapSize - (blockMemorySize); //Shrink available memory by the number of blocks times the size of a block
+    freeBlocks->nextBlock = nullptr;
 
     //Get outstanding blocks (starts as just a null)
     MemoryBlock* outstandingBlocks = nullptr;
@@ -62,8 +60,8 @@ HeapManager::MemoryBlock* HeapManager::findFirstFittingFreeBlock(size_t i_size) 
     return freeBlock;
 }
 
-int HeapManager::getBlockListSize() {
-    MemoryBlock* curBlock = blockList;
+int HeapManager::getListSize(MemoryBlock* list) {
+    MemoryBlock* curBlock = list;
     int counter = 0;
     while (curBlock != nullptr) {
         counter++;
@@ -74,12 +72,12 @@ int HeapManager::getBlockListSize() {
 
 HeapManager::MemoryBlock* HeapManager::getFreeMemoryBlock() {
     //Get a free memory block struct from the list that was initialized at the beginning
-    assert(blockList != nullptr);
+    if (blockList == nullptr) {
+        return nullptr;
+    }
 
     MemoryBlock* returnBlock = blockList;
     blockList = blockList->nextBlock;
-
-    //std::cout << getBlockListSize() << "\n";
 
     return returnBlock;
 }
@@ -93,16 +91,33 @@ void HeapManager::returnMemoryBlock(MemoryBlock* block) {
 
     blockList = block;
 
-    //std::cout << getBlockListSize() << "\n";
+    //std::cout << getListSize(blockList) << "\n";
+}
+
+bool HeapManager::detectLoop(MemoryBlock* list) {
+    MemoryBlock* curBlock = list;
+    int counter = 0;
+    while (curBlock != nullptr) {
+        counter++;
+        if (counter > 2049) {
+            return true;
+        }
+        curBlock = curBlock->nextBlock;
+    }
+    return false;
 }
 
 void HeapManager::Collect() {
+    //std::cout << "Loop: " << detectLoop(freeBlocks) << "\n";
 
     MemoryBlock* curBlock = freeBlocks;
     MemoryBlock* next = curBlock->nextBlock;
 
     //While we still have a next block to coalesce with
     while (curBlock->nextBlock) {
+        if (getListSize(blockList) == 2046) {
+            std::cout << "break\n";
+        }
         //convert to char* to allow for arithmetic, check if the blocks are adjacent
         if ((char*)curBlock->baseAddress + curBlock->blockSize == (char*)next->baseAddress) {
             curBlock->blockSize += next->blockSize;
@@ -135,18 +150,6 @@ void HeapManager::removeFromFreeList(HeapManager::MemoryBlock* emptyFreeBlock) {
 }
 
 void* HeapManager::alloc(size_t i_size, unsigned int alignment) {
-    //Check the free list for a memory block of the right size
-    MemoryBlock* freeBlock = findFirstFittingFreeBlock(i_size);
-    if (freeBlock == nullptr) {
-        Collect(); //With how I set up free() this should only ever need one time.
-        freeBlock = findFirstFittingFreeBlock(i_size);
-    }
-    //I should only ever need to collect once, so we check again and if it's not working then we can't fulfill the request
-    if (freeBlock == nullptr) {
-        std::cout << "returning nullptr\n";
-        return nullptr;
-    }
-
     //Alignment. Later on the option of allocating from the back of the block is interesting, but for now I'm doing the easiest option
     //Just round up to the nearest alignment value
     //TODO: Make sure the heap is 4-byte aligned to start
@@ -155,11 +158,31 @@ void* HeapManager::alloc(size_t i_size, unsigned int alignment) {
         i_size += (alignment - remainder);
     }
 
+    //Check the free list for a memory block of the right size
+    MemoryBlock* freeBlock = findFirstFittingFreeBlock(i_size);
+    if (freeBlock == nullptr) {
+        Collect(); //With how I set up free() this should only ever need one time.
+        freeBlock = findFirstFittingFreeBlock(i_size);
+    }
+    //I should only ever need to collect once, so we check again and if it's not working then we can't fulfill the request
+    if (freeBlock == nullptr) {
+        //std::cout << "returning nullptr\n";
+        return nullptr;
+    }
 
     MemoryBlock* block = getFreeMemoryBlock();
 
+    //Check if there are no more free memory blocks (I'd like to change this later to create a memory block during each allocation)
+    if (block == nullptr) {
+        //We can't fulfill the allocation, return nullptr
+        return nullptr;
+    }
+
     block->baseAddress = freeBlock->baseAddress;
     block->blockSize = i_size;
+
+    //std::cout << "Block: " << block->baseAddress << ", Size: " << block->blockSize << "\n";
+
     trackAlloc(block);
 
     //shrink the memory block
@@ -170,7 +193,6 @@ void* HeapManager::alloc(size_t i_size, unsigned int alignment) {
         removeFromFreeList(freeBlock);
     }
 
-    //std::cout << block->baseAddress << "\n";
     return block->baseAddress;
 }
 
@@ -203,16 +225,79 @@ HeapManager::MemoryBlock* HeapManager::removeOutstandingBlock(void* i_ptr) {
     }
 }
 
+void HeapManager::insertFreedBlock(HeapManager::MemoryBlock* block) {
+    void* blockAddress = block->baseAddress;
+
+    MemoryBlock* curBlock = freeBlocks;
+    MemoryBlock* next = curBlock->nextBlock;
+    void* curAddress = curBlock->baseAddress;
+    void* nextAddress = 0x0;
+    if (next != nullptr) {
+        nextAddress = next->baseAddress;
+    }
+
+    //initial check to see if this should be the very first block
+    if (blockAddress < curAddress) {
+        //insert block at head of list
+        block->nextBlock = freeBlocks;
+        freeBlocks = block;
+        return;
+    }
+
+    //While we still have a block to insert after (we need to have the current block and the next block so we can fill in the chain properly)
+    while (curBlock) {
+        if (blockAddress > curAddress) {
+            //Make sure we have a next block
+            if (next != nullptr) {
+                if (blockAddress < nextAddress) {
+                    //It's between current and next, so it should be inserted here and we can end
+                    curBlock->nextBlock = block;
+                    block->nextBlock = next;
+                    return;
+                }
+                // else keep going, it's greater than both.
+            }
+            else {
+                //if there's not a next block then this should be inserted at the end
+                curBlock->nextBlock = block;
+                block->nextBlock = nullptr;
+                return;
+            }
+        }
+        if (next == nullptr) {
+            //if there's not a next block then this should be inserted at the end
+            curBlock->nextBlock = block;
+            block->nextBlock = nullptr;
+            return;
+        }
+
+        curBlock = next;
+        next = next->nextBlock;
+        curAddress = curBlock->baseAddress;
+        if (next != nullptr) {
+            nextAddress = next->baseAddress;
+        }
+        else {
+            nextAddress = nullptr;
+        }
+    }
+}
+
 void HeapManager::freeBlock(void* i_ptr) {
     MemoryBlock* block = removeOutstandingBlock(i_ptr);
     assert(block != nullptr);
+    //if (block->blockSize == 564) {
+    //    //we have our loop?
+    //    std::cout << "break\n\n\n";
+    //}
+    //std::cout << "free\n";
+    //std::cout << "Block: " << block->baseAddress << ", Size: " << block->blockSize << "\n";
+    //std::cout << "Loop: " << detectLoop(freeBlocks) << "\n";
 
     //As long as I put things in the right order I shouldn't need to coalesce more than once
-    //I can also coalesce on insertion into the free list if I want, but I think coalescing in alloc works fine
-
-    //TODO: Fix ordering
-    block->nextBlock = freeBlocks;
-    freeBlocks = block;
+    insertFreedBlock(block);
+    //I'm collecting here to hopefully make certain debugging efforts easier.
+    //Collect();
 }
 
 bool HeapManager::contains(void* i_ptr) const {
