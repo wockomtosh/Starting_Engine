@@ -235,7 +235,9 @@ void Point2DUnitTest()
 int main()
 {
     Point2DUnitTest();  
+    std::cout << "Point2DUnitTest passed!" << std::endl;
     std::cout << "Starting Monster Chase" << std::endl;
+
 
     startGame();
     mainLoop();
