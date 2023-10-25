@@ -35,14 +35,14 @@ bld/
 */.vs/
 */x64/
 
-MonsterChase/.vs/
-MonsterChase/x64/
-MonsterChase/MonsterChase/x64/
-Engine/.vs/
-Engine/x64/
-HeapAllocator/.vs/
-HeapAllocator/x64/
-HeapAllocator/HeapAllocator/x64/
+MonsterChase/.vs/*
+MonsterChase/x64/*
+MonsterChase/MonsterChase/x64/*
+Engine/.vs/*
+Engine/x64/*
+HeapAllocator/.vs/*
+HeapAllocator/x64/*
+HeapAllocator/HeapAllocator/x64/*
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

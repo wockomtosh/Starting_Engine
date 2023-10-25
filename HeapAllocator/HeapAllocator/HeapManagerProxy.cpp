@@ -89,12 +89,14 @@ size_t GetTotalFreeMemory( const HeapManager * i_pManager )
 void ShowFreeBlocks( const HeapManager * i_pManager )
 {
 	assert( i_pManager );
+	i_pManager->showFreeBlocks();
 	// optional
 }
 
 void ShowOutstandingAllocations( const HeapManager * i_pManager )
 {
 	assert( i_pManager );
+	i_pManager->showOutstandingBlocks();
 	// optional
 
 }

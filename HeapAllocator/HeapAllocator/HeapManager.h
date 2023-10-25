@@ -23,6 +23,7 @@ class HeapManager
 	void insertFreedBlock(MemoryBlock* block);
 	int getListSize(MemoryBlock* list);
 	bool detectLoop(MemoryBlock* list);
+	void printBlock(MemoryBlock* block) const;
 
 
 public:
@@ -33,4 +34,6 @@ public:
 	void freeBlock(void* i_ptr);
 	bool contains(void* i_ptr) const;
 	bool isAllocated(void* i_ptr) const;
+	void showFreeBlocks() const;
+	void showOutstandingBlocks() const;
 };

@@ -107,6 +107,12 @@ bool HeapManager::detectLoop(MemoryBlock* list) {
     return false;
 }
 
+void HeapManager::printBlock(MemoryBlock* block) const
+{
+    std::cout << "Pointer: " << block << ", BaseAddress: " << block->baseAddress << ", Size: " << block->blockSize;
+    std::cout << ", Next: " << block->nextBlock << std::endl;
+}
+
 void HeapManager::Collect() {
     //std::cout << "Loop: " << detectLoop(freeBlocks) << "\n";
 
@@ -115,9 +121,9 @@ void HeapManager::Collect() {
 
     //While we still have a next block to coalesce with
     while (curBlock->nextBlock) {
-        if (getListSize(blockList) == 2046) {
-            std::cout << "break\n";
-        }
+        //if (getListSize(blockList) == 2046) {
+        //    std::cout << "break\n";
+        //}
         //convert to char* to allow for arithmetic, check if the blocks are adjacent
         if ((char*)curBlock->baseAddress + curBlock->blockSize == (char*)next->baseAddress) {
             curBlock->blockSize += next->blockSize;
@@ -297,7 +303,7 @@ void HeapManager::freeBlock(void* i_ptr) {
     //As long as I put things in the right order I shouldn't need to coalesce more than once
     insertFreedBlock(block);
     //I'm collecting here to hopefully make certain debugging efforts easier.
-    //Collect();
+    Collect();
 }
 
 bool HeapManager::contains(void* i_ptr) const {
@@ -339,4 +345,22 @@ bool HeapManager::isAllocated(void* i_ptr) const {
         curBlock = curBlock->nextBlock;
     }
     return false;
+}
+
+void HeapManager::showFreeBlocks() const
+{
+    MemoryBlock* curBlock = freeBlocks;
+    while (curBlock != nullptr) {
+        printBlock(curBlock);
+        curBlock = curBlock->nextBlock;
+    }
+}
+
+void HeapManager::showOutstandingBlocks() const
+{
+    MemoryBlock* curBlock = outstandingBlocks;
+    while (curBlock != nullptr) {
+        printBlock(curBlock);
+        curBlock = curBlock->nextBlock;
+    }
 }
