@@ -1,5 +1,0 @@
-﻿  GameObject.cpp
-  Point2D.cpp
-C:\Users\jacob\UFiles\u1070198\MonsterChase\MonsterChase\Point2D.cpp(2,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-  Generating Code...
-  Engine.vcxproj -> C:\Users\jacob\UFiles\u1070198\MonsterChase\x64\Debug\Engine.lib
