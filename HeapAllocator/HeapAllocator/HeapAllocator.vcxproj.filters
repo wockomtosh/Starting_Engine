@@ -18,9 +18,6 @@
     <ClCompile Include="HeapManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HeapManager_UnitTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HeapManagerProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,6 +30,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HeapManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeapManager-inl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

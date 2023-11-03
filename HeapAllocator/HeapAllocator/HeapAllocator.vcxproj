@@ -129,10 +129,10 @@
   <ItemGroup>
     <ClCompile Include="HeapManager.cpp" />
     <ClCompile Include="HeapManagerProxy.cpp" />
-    <ClCompile Include="HeapManager_UnitTest.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HeapManager-inl.h" />
     <ClInclude Include="HeapManager.h" />
     <ClInclude Include="HeapManagerProxy.h" />
   </ItemGroup>

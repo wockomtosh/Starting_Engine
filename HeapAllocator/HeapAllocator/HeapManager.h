@@ -14,16 +14,18 @@ class HeapManager
 
 
 	void initMemoryBlocks(void* blocksMemory, size_t blocksMemorySize);
-	void trackAlloc(MemoryBlock* block);
-	MemoryBlock* findFirstFittingFreeBlock(size_t i_size);
-	MemoryBlock* getFreeMemoryBlock();
-	void returnMemoryBlock(MemoryBlock* block);
+	
+	MemoryBlock* findFirstFittingFreeBlock(size_t i_size) const;
+	int getListSize(MemoryBlock* list) const;
+	
+	bool detectLoop(MemoryBlock* list) const;
+	void printBlock(const MemoryBlock* block) const; //not inline because i/o operations take a long time. Idk but when I was looking at inline stuff online I saw that. 
 	void removeFromFreeList(MemoryBlock* emptyFreeBlock);
 	MemoryBlock* removeOutstandingBlock(void* i_ptr);
 	void insertFreedBlock(MemoryBlock* block);
-	int getListSize(MemoryBlock* list);
-	bool detectLoop(MemoryBlock* list);
-	void printBlock(MemoryBlock* block) const;
+	inline void trackAlloc(MemoryBlock* block);
+	inline MemoryBlock* getFreeMemoryBlock();
+	inline void returnMemoryBlock(MemoryBlock* block);
 
 
 public:
@@ -32,8 +34,10 @@ public:
 	void Collect();
 	void* alloc(size_t i_size, unsigned int alignment = 4);
 	void freeBlock(void* i_ptr);
-	bool contains(void* i_ptr) const;
-	bool isAllocated(void* i_ptr) const;
+	bool contains(const void* i_ptr) const;
+	bool isAllocated(const void* i_ptr) const;
 	void showFreeBlocks() const;
 	void showOutstandingBlocks() const;
 };
+
+#include "HeapManager-inl.h"

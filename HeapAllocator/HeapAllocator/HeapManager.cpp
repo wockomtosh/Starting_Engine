@@ -3,31 +3,26 @@
 #include "HeapManager.h"
 
 HeapManager::HeapManager(void* heapMemory, size_t heapSize, unsigned int numDescriptors) {
-    //TODO: Make sure the heap is 4-byte aligned to start
-
-    //Split off a chunk of the heap for memory blocks
+    //Later on I'd like to dynamically allocate blocks as part of the memory 
+    //that gets allocated (allocate a block when you allocate memory) but that sounds too complicated for the moment.
     void* blockMemory = heapMemory;
     size_t blockMemorySize = sizeof(MemoryBlock) * numDescriptors;       
 
-    //Get the actual block structures. Later on I'd like to dynamically allocate blocks as part of the memory 
-    //that gets allocated (allocate a block when you allocate memory) but that sounds too complicated for the moment.
     initMemoryBlocks(blockMemory, blockMemorySize);
 
-    //Set up freeBlocks
     freeBlocks = getFreeMemoryBlock();
-    freeBlocks->baseAddress = (MemoryBlock*)heapMemory + numDescriptors; //Move the pointer forward however many memory blocks we're given
+    freeBlocks->baseAddress = static_cast<MemoryBlock*>(heapMemory) + numDescriptors; //Move the pointer forward however many memory blocks we're given
     freeBlocks->blockSize = heapSize - (blockMemorySize); //Shrink available memory by the number of blocks times the size of a block
     freeBlocks->nextBlock = nullptr;
 
-    //Get outstanding blocks (starts as just a null)
     MemoryBlock* outstandingBlocks = nullptr;
 }
 
 void HeapManager::initMemoryBlocks(void* blocksMemory, size_t blocksMemorySize) {
     assert((blocksMemory != nullptr) && (blocksMemorySize > sizeof(MemoryBlock)));
 
-    //Set up memory as being a pointer to MemoryBlocks
-    blockList = (MemoryBlock*)blocksMemory;
+    //Cast memory to MemoryBlocks
+    blockList = static_cast<MemoryBlock*>(blocksMemory);
     //Get the number of blocks based on available memory
     const size_t numBlocks = blocksMemorySize / sizeof(MemoryBlock);
 
@@ -43,14 +38,7 @@ void HeapManager::initMemoryBlocks(void* blocksMemory, size_t blocksMemorySize) 
     curBlock->nextBlock = nullptr;
 }
 
-void HeapManager::trackAlloc(MemoryBlock* block) {
-    //Put the memory block into the outstanding list
-    //Puts each outstanding block in front of the last
-    block->nextBlock = outstandingBlocks;
-    outstandingBlocks = block;
-}
-
-HeapManager::MemoryBlock* HeapManager::findFirstFittingFreeBlock(size_t i_size) {
+HeapManager::MemoryBlock* HeapManager::findFirstFittingFreeBlock(size_t i_size) const {
     MemoryBlock* freeBlock = freeBlocks;
     while (freeBlock) {
         if (freeBlock->blockSize >= i_size)
@@ -60,9 +48,9 @@ HeapManager::MemoryBlock* HeapManager::findFirstFittingFreeBlock(size_t i_size) 
     return freeBlock;
 }
 
-int HeapManager::getListSize(MemoryBlock* list) {
+int HeapManager::getListSize(MemoryBlock* list) const {
     MemoryBlock* curBlock = list;
-    int counter = 0;
+    short counter = 0;
     while (curBlock != nullptr) {
         counter++;
         curBlock = curBlock->nextBlock;
@@ -70,33 +58,10 @@ int HeapManager::getListSize(MemoryBlock* list) {
     return counter;
 }
 
-HeapManager::MemoryBlock* HeapManager::getFreeMemoryBlock() {
-    //Get a free memory block struct from the list that was initialized at the beginning
-    if (blockList == nullptr) {
-        return nullptr;
-    }
-
-    MemoryBlock* returnBlock = blockList;
-    blockList = blockList->nextBlock;
-
-    return returnBlock;
-}
-
-void HeapManager::returnMemoryBlock(MemoryBlock* block) {
-    assert(block != nullptr);
-
-    block->baseAddress = nullptr;
-    block->blockSize = 0;
-    block->nextBlock = blockList;
-
-    blockList = block;
-
-    //std::cout << getListSize(blockList) << "\n";
-}
-
-bool HeapManager::detectLoop(MemoryBlock* list) {
+bool HeapManager::detectLoop(MemoryBlock* list) const {
+    //DEBUG ONLY!!!
     MemoryBlock* curBlock = list;
-    int counter = 0;
+    short counter = 0;
     while (curBlock != nullptr) {
         counter++;
         if (counter > 2049) {
@@ -107,7 +72,7 @@ bool HeapManager::detectLoop(MemoryBlock* list) {
     return false;
 }
 
-void HeapManager::printBlock(MemoryBlock* block) const
+void HeapManager::printBlock(const MemoryBlock* block) const
 {
     std::cout << "Pointer: " << block << ", BaseAddress: " << block->baseAddress << ", Size: " << block->blockSize;
     std::cout << ", Next: " << block->nextBlock << std::endl;
@@ -121,11 +86,8 @@ void HeapManager::Collect() {
 
     //While we still have a next block to coalesce with
     while (curBlock->nextBlock) {
-        //if (getListSize(blockList) == 2046) {
-        //    std::cout << "break\n";
-        //}
-        //convert to char* to allow for arithmetic, check if the blocks are adjacent
-        if ((char*)curBlock->baseAddress + curBlock->blockSize == (char*)next->baseAddress) {
+        //cast to uint8_t* to allow for arithmetic, check if the blocks are adjacent
+        if (static_cast<uint8_t*>(curBlock->baseAddress) + curBlock->blockSize == static_cast<uint8_t*>(next->baseAddress)) {
             curBlock->blockSize += next->blockSize;
             curBlock->nextBlock = next->nextBlock;
             returnMemoryBlock(next);
@@ -141,7 +103,7 @@ void HeapManager::Collect() {
 
 }
 
-void HeapManager::removeFromFreeList(HeapManager::MemoryBlock* emptyFreeBlock) {
+void HeapManager::removeFromFreeList(MemoryBlock* emptyFreeBlock) {
     //We need the previous block in the list to point to the one after the block we're trying to remove
     MemoryBlock* prevBlock = freeBlocks;
     while (prevBlock->nextBlock != nullptr) {
@@ -192,8 +154,8 @@ void* HeapManager::alloc(size_t i_size, unsigned int alignment) {
     trackAlloc(block);
 
     //shrink the memory block
-    //casting to a char* to allow for pointer arithmetic in increments of 1 byte
-    freeBlock->baseAddress = (char*)freeBlock->baseAddress + i_size;
+    //casting to a uint8_t* to allow for pointer arithmetic in increments of 1 byte
+    freeBlock->baseAddress = static_cast<uint8_t*>(freeBlock->baseAddress) + i_size;
     freeBlock->blockSize -= i_size;
     if (freeBlock->blockSize == 0) {
         removeFromFreeList(freeBlock);
@@ -231,13 +193,13 @@ HeapManager::MemoryBlock* HeapManager::removeOutstandingBlock(void* i_ptr) {
     }
 }
 
-void HeapManager::insertFreedBlock(HeapManager::MemoryBlock* block) {
+void HeapManager::insertFreedBlock(MemoryBlock* block) {
     void* blockAddress = block->baseAddress;
 
     MemoryBlock* curBlock = freeBlocks;
     MemoryBlock* next = curBlock->nextBlock;
     void* curAddress = curBlock->baseAddress;
-    void* nextAddress = 0x0;
+    void* nextAddress = nullptr;
     if (next != nullptr) {
         nextAddress = next->baseAddress;
     }
@@ -292,21 +254,14 @@ void HeapManager::insertFreedBlock(HeapManager::MemoryBlock* block) {
 void HeapManager::freeBlock(void* i_ptr) {
     MemoryBlock* block = removeOutstandingBlock(i_ptr);
     assert(block != nullptr);
-    //if (block->blockSize == 564) {
-    //    //we have our loop?
-    //    std::cout << "break\n\n\n";
-    //}
-    //std::cout << "free\n";
-    //std::cout << "Block: " << block->baseAddress << ", Size: " << block->blockSize << "\n";
-    //std::cout << "Loop: " << detectLoop(freeBlocks) << "\n";
 
     //As long as I put things in the right order I shouldn't need to coalesce more than once
     insertFreedBlock(block);
-    //I'm collecting here to hopefully make certain debugging efforts easier.
+    //I'm collecting here to hopefully make certain debugging efforts easier. Also it's a bit more thorough.
     Collect();
 }
 
-bool HeapManager::contains(void* i_ptr) const {
+bool HeapManager::contains(const void* i_ptr) const {
     //loop through blockList, freeBlocks, and outstandingBlocks to see if this pointer matches any baseAddress
     MemoryBlock* curBlock = outstandingBlocks;
     while (curBlock != nullptr) {
@@ -335,7 +290,7 @@ bool HeapManager::contains(void* i_ptr) const {
     return false;
 }
 
-bool HeapManager::isAllocated(void* i_ptr) const {
+bool HeapManager::isAllocated(const void* i_ptr) const {
     //loop through outstandingBlocks to see if this pointer matches any baseAddress
     MemoryBlock* curBlock = outstandingBlocks;
     while (curBlock != nullptr) {
