@@ -1,20 +1,14 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
-#include "Point2D.h"
-#include "Monster.h"
-#include "Input.h"
 #include <assert.h>
 
+#include "MonsterChase.h"
+#include "Input.h"
 
-char* playerName;
-Point2D playerPos = Point2D();
-int numMonsters;
-int totalMonsters;
-Monster* monsters;
 
 template <typename T>
-T* appendToArray(T newValue, T* i_array, int i_arrayLength)
+T* MonsterChase::appendToArray(T newValue, T* i_array, int i_arrayLength)
 {
     //copy i_array over to new array with additional space
     T* o_array = (T*)malloc((i_arrayLength + 1) * sizeof(T));
@@ -38,7 +32,7 @@ T* appendToArray(T newValue, T* i_array, int i_arrayLength)
 }
 
 template <typename T>
-T* removeFromArray(int removeIndex, T* i_array, int i_arrayLength)
+T* MonsterChase::removeFromArray(int removeIndex, T* i_array, int i_arrayLength)
 {
     //copy i_array over to new array with less space, don't copy over the removeValue
     //If the remove value isn't in the array, this will remove the final value in the array because that gets cut off. There isn't a check for the remove value.
@@ -64,7 +58,7 @@ T* removeFromArray(int removeIndex, T* i_array, int i_arrayLength)
     return o_array;
 }
 
-void initMonsters()
+void MonsterChase::initMonsters()
 {
     monsters = (Monster*)malloc(numMonsters * sizeof(Monster));
     for (int i = 0; i < numMonsters; i++) 
@@ -76,7 +70,7 @@ void initMonsters()
     }
 }
 
-void startGame()
+void MonsterChase::startGame()
 {
     playerName = getInputString("Enter Player Name: ");
     numMonsters = getInputInt("Enter Number of initial Monsters: ");
@@ -84,20 +78,20 @@ void startGame()
     initMonsters();
 }
 
-void removeMonster(int index)
+void MonsterChase::removeMonster(int index)
 {
     monsters = removeFromArray(index, monsters, numMonsters);
     numMonsters -= 1;
 }
 
-void addMonster()
+void MonsterChase::addMonster()
 {
     monsters = appendToArray(Monster("Monster", totalMonsters), monsters, numMonsters);
     numMonsters += 1;
     totalMonsters += 1;
 }
 
-void addRemoveMonsters()
+void MonsterChase::addRemoveMonsters()
 {
     //Remove monsters after a certain number of turns
     //Start from the end and work backwards to not mess with the order of the arrays by removing during the loop
@@ -112,7 +106,7 @@ void addRemoveMonsters()
     }
 }
 
-void moveMonsters()
+void MonsterChase::moveMonsters()
 {
     for (int i = 0; i < numMonsters; i++)
     {
@@ -120,7 +114,7 @@ void moveMonsters()
     }
 }
 
-void displayMonsters()
+void MonsterChase::displayMonsters()
 {
     std::cout << std::endl;
     for (int i = 0; i < numMonsters; i++)
@@ -129,14 +123,14 @@ void displayMonsters()
     }
 }
 
-void displayPlayer()
+void MonsterChase::displayPlayer()
 {
     std::cout << std::endl << playerName << " ";
     playerPos.print();
     std::cout << std::endl;
 }
 
-void queryPlayer()
+void MonsterChase::queryPlayer()
 {
     char input = getInputChar("Use the WASD keys to move or Q to quit");
     switch (input)
@@ -160,7 +154,7 @@ void queryPlayer()
     }
 }
 
-void mainLoop()
+void MonsterChase::mainLoop()
 {
     while(true)
     {
@@ -172,7 +166,7 @@ void mainLoop()
     }
 }
 
-void Point2DUnitTest()
+void MonsterChase::Point2DUnitTest()
 {
     Point2D A(0, 1);
     Point2D B(2, 3);
@@ -232,12 +226,10 @@ void Point2DUnitTest()
     assert(B == Point2D(2, 3));
 }
 
-int main()
-{
-    Point2DUnitTest();  
+void MonsterChase::run() {
+    Point2DUnitTest();
     std::cout << "Point2DUnitTest passed!" << std::endl;
     std::cout << "Starting Monster Chase" << std::endl;
-
 
     startGame();
     mainLoop();

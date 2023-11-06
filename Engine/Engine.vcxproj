@@ -133,10 +133,10 @@
     <ClInclude Include="Input.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\MonsterChase\MonsterChase\GameObject.cpp" />
-    <ClCompile Include="..\MonsterChase\MonsterChase\Point2D.cpp" />
     <ClCompile Include="ArrayUtils.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Point2D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
