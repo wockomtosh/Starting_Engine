@@ -8,6 +8,9 @@ int main()
 #ifdef MONSTER_CHASE
     MonsterChase* game = new MonsterChase();
     game->run();
-#endif
 
+#else
+
+
+#endif
 }
