@@ -29,7 +29,7 @@ int stringLength(const char* string) {
 char* getInputString(const char* prompt)
 {
 	const size_t maxLen = 128;
-	char* playerInput = (char*)calloc(maxLen, sizeof(char));
+	char* playerInput = (char*)malloc(maxLen * sizeof(char));
 	std::cout << prompt;
 	//std::cin >> playerInput;
 	assert(playerInput != NULL);
@@ -40,8 +40,8 @@ char* getInputString(const char* prompt)
 	length += 1;
 
 	//Allocate less space for the input
-	char* trimmedPlayerInput = (char*)calloc(length, sizeof(char));
-	//copy over the input. Because of calloc the final char will be null
+	char* trimmedPlayerInput = (char*)malloc(length * sizeof(char));
+	//Copy over the input. Add null as a terminator at the end.
 	for (int i = 0; i < length - 1; i++)
 	{
 		if (trimmedPlayerInput != NULL) //To get rid of warning
@@ -49,6 +49,7 @@ char* getInputString(const char* prompt)
 			trimmedPlayerInput[i] = playerInput[i];
 		}
 	}
+	trimmedPlayerInput[length - 1] = NULL;
 	free(playerInput);
 	return trimmedPlayerInput;
 }
@@ -57,7 +58,7 @@ char** appendToStringArray(char* newValue, char** i_array, int i_arrayLength)
 {
 	//copy i_array over to new array with additional space
 	size_t numStrings = static_cast<size_t>(i_arrayLength) + static_cast<size_t>(1);
-	char** o_array = static_cast<char**>(calloc(numStrings, sizeof(char*)));
+	char** o_array = static_cast<char**>(malloc(numStrings * sizeof(char*)));
 
 	for (int i = 0; i < i_arrayLength; i++)
 	{
@@ -108,9 +109,9 @@ char* MakeSentence(char** strings) {
 	totalChars++;
 
 	//allocate the final sentence
-	char* sentence = static_cast<char*>(calloc(totalChars, sizeof(char)));
+	char* sentence = static_cast<char*>(malloc(totalChars * sizeof(char)));
 
-	//build the sentence with the strings, adding spaces and the period. There's already an extra space at the end that is null from calloc()
+	//build the sentence with the strings, adding spaces and the period.
 	char* sentenceLocation = sentence;
 	for (int i = 0; i < length; i++) {
 		//We have the sentence location, copy over each string into that place while moving along the sentence
@@ -143,8 +144,8 @@ char* MakeSentence(char** strings) {
 			sentenceLocation[0] = ' ';
 			sentenceLocation++;
 		}
-
 	}
+	sentenceLocation[0] = NULL;
 
 	free(strings);
 
