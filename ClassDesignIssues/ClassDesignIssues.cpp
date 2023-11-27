@@ -153,6 +153,10 @@ void Test3()
 	// No changes can be made to this code
 	// Hint: You probably want to use _CrtDumpMemoryLeaks()
 
+	//Do we need a copy constructor for GameActor?
+	//Where is memory being allocated, why isn't it being destroyed?
+	//GameActor doesnt have a name. What's happening to the string pointer?
+
 	std::vector<GameActor*> TestGameActorPtrs;
 
 	TestGameActorPtrs.push_back(new PlayerActor("Player1"));
