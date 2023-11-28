@@ -14,6 +14,7 @@ class GameActor
 public:
 	// Adding this destructor allows the destructor for child classes to be called. 
 	// It adds the destructor to the Virtual Function Table so that the child function can be called on base class object.
+	// CAREFUL doing this willy-nilly, since if a class has no other virtual functions then making a virtual destructor will create a VFT and that can be a performance hit.
 	virtual				~GameActor() { }
 	virtual void		Update() { }
 	virtual const char* getActorType() const = 0;
