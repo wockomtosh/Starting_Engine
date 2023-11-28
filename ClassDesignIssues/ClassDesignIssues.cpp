@@ -12,7 +12,10 @@
 class GameActor
 {
 public:
-	virtual void			Update() { }
+	// Adding this destructor allows the destructor for child classes to be called. 
+	// It adds the destructor to the Virtual Function Table so that the child function can be called on base class object.
+	virtual				~GameActor() { }
+	virtual void		Update() { }
 	virtual const char* getActorType() const = 0;
 };
 
@@ -37,6 +40,17 @@ public:
 	{
 		m_ActorNumber = i_other.m_ActorNumber;
 		m_pName = _strdup(i_other.m_pName ? i_other.m_pName : "Generic");
+	}
+
+	// Assignment operator to fix std::shuffle
+	// Assignment operators by default just copy the member variables over, which can cause issues for pointer member variables
+	PlayerActor& operator=(const PlayerActor& i_other) 
+	{
+		free(const_cast<char*>(m_pName));
+
+		m_pName = _strdup(i_other.m_pName ? i_other.m_pName : "Generic");
+
+		return *this;
 	}
 
 	~PlayerActor()
@@ -73,8 +87,7 @@ int main()
 	// within need to be resolved.
 
 	Test0();
-	//DOESN'T WORK so I commented it out for now. 
-	//Test1(); 
+	Test1(); 
 	Test2();
 	Test3();
 
@@ -90,6 +103,8 @@ void Test0()
 	PlayerActor Joe("Joe");
 
 	Joe.Update();
+	// Adding this for output readability
+	printf("\n");
 }
 
 void Test1()
@@ -105,7 +120,8 @@ void Test1()
 	TestActors.push_back(PlayerActor("Player3"));
 	TestActors.push_back(PlayerActor("Player4"));
 
-	//I have no clue how random shuffle works. I tried looking it up but it wasn't helpful in figuring out why it doesn't shuffle correctly.
+	// SWAP NEEDS TO WORK DIFFERENTLY WITH CLASS BASED TYPES
+	// The assignment operator just copies the values from the existing class into the new class. That can cause issues with pointer member variables.
 	std::random_shuffle(TestActors.begin(), TestActors.end());
 
 	for (auto iter = TestActors.begin(); iter != TestActors.end(); ++iter)
@@ -113,6 +129,8 @@ void Test1()
 		// do something interesting with our PlayerActors
 		iter->Update();
 	}
+	// Adding this for output readability
+	printf("\n");
 }
 
 void Test2()
@@ -140,10 +158,13 @@ void Test2()
 	for (auto iter = TestPlayerActorPtrs.begin(); iter != TestPlayerActorPtrs.end(); ++iter)
 	{
 		if (*iter) {
-			//Just call delete to fix the memory leaks??? But at the same time, I'm not actually seeing any memory leaks when I don't do this???
+			// Just call delete to fix the memory leaks. Pointers is the issue here, the destructor for a pointer is different from the destructor for a class.
 			delete (*iter);
+			*iter = nullptr;
 		}
 	}
+	// Adding this for output readability
+	printf("\n");
 }
 
 void Test3()
@@ -152,10 +173,6 @@ void Test3()
 	// by ONLY making changes to the GameActor class.
 	// No changes can be made to this code
 	// Hint: You probably want to use _CrtDumpMemoryLeaks()
-
-	//Do we need a copy constructor for GameActor?
-	//Where is memory being allocated, why isn't it being destroyed?
-	//GameActor doesnt have a name. What's happening to the string pointer?
 
 	std::vector<GameActor*> TestGameActorPtrs;
 
@@ -171,5 +188,11 @@ void Test3()
 			(*iter)->Update();
 	}
 
-	//I'm not seeing any memory leaks here??? _CrtDumpMemoryLeaks() isn't printing anything.
+	for (auto iter = TestGameActorPtrs.begin(); iter != TestGameActorPtrs.end(); ++iter)
+	{
+		if (*iter) {
+			delete (*iter);
+			*iter = nullptr;
+		}
+	}
 }
