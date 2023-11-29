@@ -79,7 +79,7 @@ void Test3();
 
 
 //Changed because it was giving a warning.
-int main()
+int main( int i_argc, char** i_argl )
 {
 	// Your assignment is to fix all the warnings, crashes and memory leaks
 	// that happen when running this program.
