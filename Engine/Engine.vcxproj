@@ -127,10 +127,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\MonsterChase\MonsterChase\GameObject.h" />
-    <ClInclude Include="..\MonsterChase\MonsterChase\Point2D.h" />
     <ClInclude Include="ArrayUtils.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Point2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArrayUtils.cpp" />
