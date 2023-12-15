@@ -83,13 +83,11 @@ void __cdecl free(void * i_ptr)
 
 void * operator new(size_t i_size)
 {
-	//We need to malloc and then call the constructor?
 	return malloc(i_size);
 }
 
 void operator delete(void * i_ptr)
 {
-	//TODO: HOW DO I CALL DESTRUCTORS??
 	return free(i_ptr);
 }
 

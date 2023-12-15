@@ -51,8 +51,6 @@ void DestroyMemorySystem()
 	defaultHeapManager->freeBlock(FSAList);
 	FSAList = nullptr;
 
-	defaultHeapManager->showOutstandingBlocks();
-
 	defaultHeapManager = nullptr;
 }
 
