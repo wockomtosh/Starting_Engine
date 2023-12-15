@@ -44,6 +44,7 @@ void __cdecl free(void * i_ptr)
 		if (FSAList[i]->contains(i_ptr))
 		{
 			FSAList[i]->freeBlock(i_ptr);
+			return;
 		}
 	}
 
