@@ -10,6 +10,7 @@ public:
 	void* alloc();
 	void freeBlock(void* i_ptr);
 	bool contains(const void* i_ptr) const;
+	void* getBaseAddress();
 
 private:
 	BitArray* blockTracker;

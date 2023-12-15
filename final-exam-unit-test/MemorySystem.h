@@ -10,10 +10,10 @@ struct FSAInitData
 };
 
 static const int numFSAs = 3;
-static FSAInitData FSASizes[numFSAs] = { {16, 100}, {32, 200}, {96, 400} };
+static const FSAInitData FSASizes[numFSAs] = { {16, 100}, {32, 200}, {96, 400} };
 
-static HeapManager* defaultHeapManager;
-static FixedSizeAllocator** FSAList;
+extern HeapManager* defaultHeapManager;
+extern FixedSizeAllocator** FSAList;
 
 // InitializeMemorySystem - initialize your memory system including your HeapManager and some FixedSizeAllocators
 bool InitializeMemorySystem(void * i_pHeapMemory, size_t i_sizeHeapMemory, unsigned int i_OptionalNumDescriptors);

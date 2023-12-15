@@ -1,6 +1,10 @@
 #include "MemorySystem.h"
 
 
+HeapManager* defaultHeapManager;
+FixedSizeAllocator** FSAList;
+
+
 bool InitializeMemorySystem(void * i_pHeapMemory, size_t i_sizeHeapMemory, unsigned int i_OptionalNumDescriptors)
 {
 	//Create HeapManager (Set aside the memory for it then call the constructor using placement new)
@@ -36,8 +40,19 @@ void Collect()
 
 void DestroyMemorySystem()
 {
-	// Destroy your HeapManager and FixedSizeAllocators
+	//Free the FSAs first using the HeapManager
+	for (int i = 0; i < numFSAs; i++)
+	{
+		//Make sure to call the destructor. That will free the internal memory and the BitArray
+		FSAList[i]->~FixedSizeAllocator();
+		defaultHeapManager->freeBlock(FSAList[i]->getBaseAddress());
+		defaultHeapManager->freeBlock(FSAList[i]);
+	}
+	defaultHeapManager->freeBlock(FSAList);
+	FSAList = nullptr;
 
-	//Make sure to destroy the bit arrays, FSAList (with each FSA), and FSAMemory allocations. Do that in the destructor of the FSA?
+	defaultHeapManager->showOutstandingBlocks();
+
+	defaultHeapManager = nullptr;
 }
 

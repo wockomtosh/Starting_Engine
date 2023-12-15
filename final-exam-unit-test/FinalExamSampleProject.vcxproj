@@ -152,7 +152,6 @@
     <ClCompile Include="MemorySystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Allocators.h" />
     <ClInclude Include="BitArray.h" />
     <ClInclude Include="FixedSizeAllocator.h" />
     <ClInclude Include="HeapManager-inl.h" />

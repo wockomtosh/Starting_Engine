@@ -30,6 +30,7 @@ class HeapManager
 
 public:
 	HeapManager(void* heapMemory, size_t heapSize, unsigned int numDescriptors);
+	~HeapManager();
 
 	void Collect();
 	void* alloc(size_t i_size, unsigned int alignment = 4);

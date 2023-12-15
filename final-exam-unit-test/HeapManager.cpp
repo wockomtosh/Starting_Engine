@@ -18,6 +18,11 @@ HeapManager::HeapManager(void* heapMemory, size_t heapSize, unsigned int numDesc
     MemoryBlock* outstandingBlocks = nullptr;
 }
 
+HeapManager::~HeapManager()
+{
+    //Destroy block list and the last free block?
+}
+
 void HeapManager::initMemoryBlocks(void* blocksMemory, size_t blocksMemorySize) {
     assert((blocksMemory != nullptr) && (blocksMemorySize > sizeof(MemoryBlock)));
 
@@ -74,8 +79,8 @@ bool HeapManager::detectLoop(MemoryBlock* list) const {
 
 void HeapManager::printBlock(const MemoryBlock* block) const
 {
-    std::cout << "Pointer: " << block << ", BaseAddress: " << block->baseAddress << ", Size: " << block->blockSize;
-    std::cout << ", Next: " << block->nextBlock << std::endl;
+   /* std::cout << "Pointer: " << block << ", BaseAddress: " << block->baseAddress << ", Size: " << block->blockSize;
+    std::cout << ", Next: " << block->nextBlock << std::endl;*/
 }
 
 void HeapManager::Collect() {

@@ -7,7 +7,6 @@ BitArray::BitArray(size_t i_numBits, bool initToZero)
 {
     numBits = i_numBits;
     size_t bitsPerElement = sizeof(BitData) * 8;
-    //FIX THIS???
     bits = new BitData[numBits / bitsPerElement];
 
     if (initToZero)
@@ -37,7 +36,6 @@ bool BitArray::FindFirstSetBit(size_t& firstSetBitIndex) const
         index++;
     }
 
-    //Check if there are no set bits
     if (index >= numElements) 
     {
         return false;
@@ -46,10 +44,8 @@ bool BitArray::FindFirstSetBit(size_t& firstSetBitIndex) const
     BitData currentBits = bits[index];
     unsigned long bitIndex;
 
-    //Because BitScanForward indexes from the least significant bit, each set of 64 bits would be backwards from how you write them.
-    //This shouldn't be an issue if we account for it when indexing
 #ifdef WIN32
-    _BitScanForward(bitIndex, currentBits);
+    _BitScanForward(&bitIndex, currentBits);
 #else
     _BitScanForward64(&bitIndex, currentBits);
 #endif
@@ -65,7 +61,7 @@ bool BitArray::FindFirstClearBit(size_t& firstClearBitIndex) const
     size_t bitsPerElement = sizeof(BitData) * 8;
     size_t numElements = numBits / bitsPerElement;
 
-    //Get the block of bits that contains the first set bit
+    //Get the block of bits that contains the first clear bit
     while ((bits[index] == BitData(0)) && (index < numElements))
     {
         index++;
@@ -80,11 +76,9 @@ bool BitArray::FindFirstClearBit(size_t& firstClearBitIndex) const
     BitData currentBits = bits[index];
     unsigned long bitIndex;
 
-    //Because BitScanForward indexes from the least significant bit, each set of 64 bits would be backwards from how you write them.
-    //This shouldn't be an issue if we account for it when indexing
     //The only difference between the first set bit and first clear bit is that we can do a bitwise NOT and then git the first set bit.
 #ifdef WIN32
-    _BitScanForward(bitIndex, ~currentBits);
+    _BitScanForward(&bitIndex, ~currentBits);
 #else
     _BitScanForward64(&bitIndex, ~currentBits);
 #endif
