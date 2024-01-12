@@ -1,16 +1,9 @@
 #include <iostream>
 #include "MonsterChase.h"
-
-#define MONSTER_CHASE
+#include "GLib.h"
 
 int main()
 {
-#ifdef MONSTER_CHASE
     MonsterChase* game = new MonsterChase();
     game->run();
-
-#else
-
-
-#endif
 }

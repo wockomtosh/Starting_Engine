@@ -5,11 +5,11 @@
 class MonsterChase {
 
 private:
-	char* playerName;
+	char* playerName = nullptr;
 	Point2D playerPos = Point2D();
-	int numMonsters;
-	int totalMonsters;
-	Monster* monsters;
+	int numMonsters = 0;
+	int totalMonsters = 0;
+	Monster* monsters = nullptr;
 
 	template <typename T>
 	T* appendToArray(T newValue, T* i_array, int i_arrayLength);
