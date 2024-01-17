@@ -21,7 +21,6 @@ T* MonsterChase::appendToArray(T newValue, T* i_array, int i_arrayLength)
     }
     if (o_array != NULL)
     {
-        //NULL check removes a warning
         o_array[i_arrayLength] = newValue; //add the new value
     }
 
@@ -45,7 +44,7 @@ T* MonsterChase::removeFromArray(int removeIndex, T* i_array, int i_arrayLength)
         {
             if (o_array != NULL)
             {
-                //NULL check removes a warnings
+                //This NULL check should remove the warning, but for some reason it isn't....
                 o_array[o_location] = i_array[i];
             }
             o_location++;
@@ -72,11 +71,20 @@ void MonsterChase::initMonsters()
 
 void MonsterChase::startGame()
 {
-    playerName = getInputString("Enter Player Name: ");
-    numMonsters = getInputInt("Enter Number of initial Monsters: ");
+    /*playerName = getInputString("Enter Player Name: ");
+    numMonsters = getInputInt("Enter Number of initial Monsters: ");*/
+    playerName = "Player";
+    numMonsters = 4;
     totalMonsters = numMonsters;
     initMonsters();
 }
+
+//Old main loop:
+//game->addRemoveMonsters();
+//game->moveMonsters();
+//game->displayMonsters();
+//game->displayPlayer();
+//game->queryPlayer();
 
 void MonsterChase::removeMonster(int index)
 {
@@ -154,15 +162,16 @@ void MonsterChase::queryPlayer()
     }
 }
 
-void MonsterChase::mainLoop()
+void MonsterChase::RenderMonsters(GLib::Sprite* monsterSprite)
 {
-    while(true)
+    static GLib::Point2D	totalOffset = { 180.0f, -100.0f };
+
+    int monsterLocationScale = 1;
+
+    for (int i = 0; i < numMonsters; i++)
     {
-        addRemoveMonsters();
-        moveMonsters();
-        displayMonsters();
-        displayPlayer();
-        queryPlayer();
+        Point2D newLocation = Point2D(monsters[i].getLocation().getX() * monsterLocationScale + totalOffset.x, monsters[i].getLocation().getY() * monsterLocationScale + totalOffset.y);
+        GLib::Render(*monsterSprite, { static_cast<float>(newLocation.getX()), static_cast<float>(newLocation.getY()) }, 0.0f, 0.0f);
     }
 }
 
@@ -224,13 +233,4 @@ void MonsterChase::Point2DUnitTest()
     // Point2D /= int
     B /= 2;
     assert(B == Point2D(2, 3));
-}
-
-void MonsterChase::run() {
-    Point2DUnitTest();
-    std::cout << "Point2DUnitTest passed!" << std::endl;
-    std::cout << "Starting Monster Chase" << std::endl;
-
-    startGame();
-    mainLoop();
 }

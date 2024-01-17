@@ -9,7 +9,7 @@ Monster::Monster(const char* name, int number)
     this->number = number;
     int randx = rand() % 100 - 50;
     int randy = rand() % 100 - 50;
-    setLocation(Point2D(randx, randy));
+    setLocation(Point2D(static_cast<float>(randx), static_cast<float>(randy)));
     setName(name);
 }
 

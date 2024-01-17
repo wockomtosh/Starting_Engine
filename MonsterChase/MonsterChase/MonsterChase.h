@@ -1,11 +1,12 @@
 #pragma once
 #include "Point2D.h"
 #include "Monster.h"
+#include "GLib.h"
 
 class MonsterChase {
 
 private:
-	char* playerName = nullptr;
+	const char* playerName = nullptr;
 	Point2D playerPos = Point2D();
 	int numMonsters = 0;
 	int totalMonsters = 0;
@@ -16,17 +17,16 @@ private:
 	template <typename T>
 	T* removeFromArray(int removeIndex, T* i_array, int i_arrayLength);
 	void initMonsters();
-	void startGame();
 	void removeMonster(int index);
 	void addMonster();
+
+public:
+	void Point2DUnitTest();
+	void startGame();
 	void addRemoveMonsters();
 	void moveMonsters();
 	void displayMonsters();
 	void displayPlayer();
 	void queryPlayer();
-	void mainLoop();
-	void Point2DUnitTest();
-
-public:
-	void run();
+	void RenderMonsters(GLib::Sprite* monsterSprite);
 };

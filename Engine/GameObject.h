@@ -3,10 +3,10 @@
 
 class GameObject
 {
+public:
 	Point2D location;
 	const char* name;
 
-public:
 	GameObject();
 	GameObject(Point2D startingLocation);
 
