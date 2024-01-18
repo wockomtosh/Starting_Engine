@@ -22,7 +22,6 @@ Player* player;
 void* LoadFile(const char* i_pFilename, size_t& o_sizeFile);
 GLib::Sprite* CreateSprite(const char* i_pFilename);
 void RenderPlayer(GLib::Sprite* playerSprite);
-void RenderEnemies(GLib::Sprite* monsterSprite);
 
 void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 {
