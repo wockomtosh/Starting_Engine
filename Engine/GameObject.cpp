@@ -1,38 +1,60 @@
 #include "GameObject.h"
 
-GameObject::GameObject()
+GameObject::GameObject() :
+	position(Vector2()), orientation(0), name(""), components({ {"", nullptr} })
 {
-	location = Point2D();
-	name = "";
 }
 
-GameObject::GameObject(Point2D startingLocation)
+GameObject::GameObject(Vector2 startingLocation) :
+	position(startingLocation), orientation(0), name(""), components({ {"", nullptr} })
 {
-	location = startingLocation;
-	name = "";
 }
 
-Point2D GameObject::getLocation()
+GameObject::GameObject(Vector2 startingLocation, std::map<std::string, void*> components) :
+	position(startingLocation), orientation(0), name(""), components(components)
 {
-	return location;
 }
 
-void GameObject::setLocation(Point2D newLocation)
+Vector2 GameObject::getLocation()
 {
-	location = newLocation;
+	return position;
 }
 
-const char* GameObject::getName()
+void GameObject::setPosition(Vector2 newLocation)
+{
+	position = newLocation;
+}
+
+std::string GameObject::getName()
 {
 	return name;
 }
 
-void GameObject::setName(const char* newName)
+void GameObject::setName(std::string newName)
 {
 	name = newName;
 }
 
+void* GameObject::getComponent(const std::string componentName)
+{
+	if (!components.empty()) 
+	{
+		auto component = components.find(componentName);
+		if (component == components.end())
+		{
+			return nullptr;
+		}
+		return components[componentName];
+	}
+	
+}
+
+void GameObject::addComponent(const std::string componentName, void* component)
+{
+	components[componentName] = component;
+}
+
 void GameObject::print()
 {
-	location.print();
+	position.print();
 }

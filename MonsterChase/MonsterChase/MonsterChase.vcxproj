@@ -141,7 +141,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\Engine\GameObject.cpp" />
     <ClCompile Include="..\..\Engine\Input.cpp" />
-    <ClCompile Include="..\..\Engine\Point2D.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterChase.cpp" />
@@ -150,7 +149,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\Engine\GameObject.h" />
     <ClInclude Include="..\..\Engine\Input.h" />
-    <ClInclude Include="..\..\Engine\Point2D.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterChase.h" />
     <ClInclude Include="Player.h" />

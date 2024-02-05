@@ -1,19 +1,28 @@
 #pragma once
-#include "Point2D.h"
+#include "Vector2.h"
+#include <map>
+#include <string>
 
 class GameObject
 {
+	std::map<std::string, void*> components;
+
 public:
-	Point2D location;
-	const char* name;
+	Vector2 position;
+	float orientation;
+	std::string name;
 
 	GameObject();
-	GameObject(Point2D startingLocation);
+	GameObject(Vector2 startingLocation);
+	GameObject(Vector2 startingLocation, std::map<std::string, void*> components);
 
-	Point2D getLocation();
-	void setLocation(Point2D newLocation);
-	const char* getName();
-	void setName(const char* newName);
+	Vector2 getLocation();
+	void setPosition(Vector2 newPosition);
+	std::string getName();
+	void setName(std::string newName);
+
+	void* getComponent(const std::string componentName);
+	void addComponent(const std::string componentName, void* component);
 
 	void print();
 

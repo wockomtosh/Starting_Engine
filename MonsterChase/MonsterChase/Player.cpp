@@ -2,5 +2,5 @@
 
 Player::Player()
 {
-	location = Point2D(0, 0);
+	position = Vector2(0, 0);
 }

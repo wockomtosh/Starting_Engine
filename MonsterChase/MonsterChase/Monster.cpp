@@ -9,7 +9,7 @@ Monster::Monster(const char* name, int number)
     this->number = number;
     int randx = rand() % 100 - 50;
     int randy = rand() % 100 - 50;
-    setLocation(Point2D(static_cast<float>(randx), static_cast<float>(randy)));
+    setPosition(Vector2(static_cast<float>(randx), static_cast<float>(randy)));
     setName(name);
 }
 
@@ -43,22 +43,22 @@ void Monster::move()
     {
         if (posOrNeg == 0) //this will be positive
         {
-            setLocation(getLocation() + Point2D::Right);
+            setPosition(getLocation() + Vector2::Right);
         }
         else
         {
-            setLocation(getLocation() + Point2D::Left);
+            setPosition(getLocation() + Vector2::Left);
         }
     }
     else
     {
         if (posOrNeg == 0)
         {
-            setLocation(getLocation() + Point2D::Up);
+            setPosition(getLocation() + Vector2::Up);
         }
         else
         {
-            setLocation(getLocation() + Point2D::Down);
+            setPosition(getLocation() + Vector2::Down);
         }
     }
     //Increase the amount of time the monster has been alive

@@ -1,5 +1,5 @@
 #pragma once
-#include "Point2D.h"
+#include "Vector2.h"
 #include "Monster.h"
 #include "GLib.h"
 
@@ -7,7 +7,7 @@ class MonsterChase {
 
 private:
 	const char* playerName = nullptr;
-	Point2D playerPos = Point2D();
+	Vector2 playerPos = Vector2();
 	int numMonsters = 0;
 	int totalMonsters = 0;
 	Monster* monsters = nullptr;

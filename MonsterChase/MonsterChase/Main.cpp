@@ -14,40 +14,129 @@
 #include "MonsterChase.h"
 #include "GLib.h"
 
-#include "Player.h"
+#include "GameObject.h"
+#include "PhysicsSystem.h"
 
 MonsterChase* game;
-Player* player;
+GameObject* player;
+PhysicsSystem* physicsSystem;
+double previousTick;
+double dt = 0;
+
 
 void* LoadFile(const char* i_pFilename, size_t& o_sizeFile);
 GLib::Sprite* CreateSprite(const char* i_pFilename);
 void RenderPlayer(GLib::Sprite* playerSprite);
 
+void startTick()
+{
+	previousTick = GetTickCount64();
+}
+
+void getTick()
+{
+	double currentTick = GetTickCount64();
+	dt = (currentTick - previousTick) / 1000; //Divide by 1000 to get it in seconds
+
+	std::cout << dt << std::endl;
+
+	previousTick = currentTick;
+}
+
+void setupPlayer()
+{
+	//Maybe this could be used for any object? Just swap out components as needed?
+	//This should maybe be inside the GameObject constructor because it's absolutely required for all GameObjects
+
+	Rigidbody* playerBody = new Rigidbody();
+	PhysicsComponent* playerPhysics = new PhysicsComponent(playerBody, 1, { Vector2(), 0 });
+
+	std::map<std::string, void*> components = { {"Rigidbody", playerBody},
+												{"PhysicsComponent", playerPhysics} };
+
+	player = new GameObject(Vector2(), components);
+
+	playerBody->gameObject = player;
+
+}
+
+void setupPhysics()
+{
+	//Right now I'm just having the player do physics, I'll need to figure out how to set up the rest later
+	PhysicsComponent** physicsObjects = static_cast<PhysicsComponent**>(malloc(sizeof(PhysicsComponent) * 1));
+	//Here I would normally iterate through all my game objects and find whichever ones have this and add them
+	physicsObjects[0] = static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"));
+	physicsSystem = new PhysicsSystem(physicsObjects, 1);
+}
+
 void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 {
-#ifdef _DEBUG
-    const size_t	lenBuffer = 129;
-    char			Buffer[lenBuffer];
+	unsigned int w = 0x57;
+	unsigned int a = 0x41;
+	unsigned int s = 0x53;
+	unsigned int d = 0x44;
 
-	unsigned int s = 83;
-
+	if (i_VKeyID == w)
+	{
+		if (bWentDown)
+		{
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Up * 2, 0 };
+		}
+		else {
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
+		}
+	}
+	if (i_VKeyID == a)
+	{
+		if (bWentDown)
+		{
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Left * 2, 0 };
+		}
+		else {
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
+		}
+	}
 	if (i_VKeyID == s)
 	{
-		player->location += Point2D::Down;
+		if (bWentDown)
+		{
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Down * 2, 0 };
+		}
+		else {
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
+		}
 	}
-    //sprintf_s(Buffer, lenBuffer, "VKey 0x%04x went %s\n", i_VKeyID, bWentDown ? "down" : "up");
-    //OutputDebugStringA(Buffer);
+	if (i_VKeyID == d)
+	{
+		if (bWentDown)
+		{
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Right * 2, 0 };
+		}
+		else {
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
+		}
+	}
+#ifdef _DEBUG
+	const size_t	lenBuffer = 129;
+	char			Buffer[lenBuffer];
+
+    sprintf_s(Buffer, lenBuffer, "VKey 0x%04x went %s\n", i_VKeyID, bWentDown ? "down" : "up");
+    OutputDebugStringA(Buffer);
 #endif // __DEBUG
 }
 
 int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
-    game = new MonsterChase();
-    game->startGame();
-	player = new Player();
+    //game = new MonsterChase();
+    //game->startGame();
+	startTick();
+
+	setupPlayer();
+
+	setupPhysics();
 
     // IMPORTANT: first we need to initialize GLib
-    bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "GLibTest", -1, 800, 600, true);
+    bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "GLibTest", -1, 1024, 768, true);
 
 	if (bSuccess)
 	{
@@ -56,7 +145,7 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 
 		// Create a couple of sprites using our own helper routine CreateSprite
 		GLib::Sprite* pGoodGuy = CreateSprite("sprites\\GoodGuy.dds");
-		GLib::Sprite* pBadGuy = CreateSprite("sprites\\BadGuy.dds");
+		//GLib::Sprite* pBadGuy = CreateSprite("sprites\\BadGuy.dds");
 
 		bool bQuit = false;
 
@@ -68,6 +157,12 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 
 			if (!bQuit)
 			{
+				getTick();
+
+				//PhysicsSystem portion of the loop
+				//static_cast<Rigidbody*>(player->getComponent("Rigidbody"))->update(dt, { Vector2(100, 100), 0 });
+				physicsSystem->update();
+
 				// IMPORTANT: Tell GLib that we want to start rendering
 				GLib::BeginRendering(DirectX::Colors::Blue);
 				// Tell GLib that we want to render some sprites
@@ -77,12 +172,12 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 				{
 					RenderPlayer(pGoodGuy);
 				}
-				if (pBadGuy)
-				{
-					//game->addRemoveMonsters();
-					game->moveMonsters();
-					game->RenderMonsters(pBadGuy);
-				}
+				//if (pBadGuy)
+				//{
+				//	//game->addRemoveMonsters();
+				//	game->moveMonsters();
+				//	game->RenderMonsters(pBadGuy);
+				//}
 
 				// Tell GLib we're done rendering sprites
 				GLib::Sprites::EndRendering();
@@ -93,8 +188,8 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 
 		if (pGoodGuy)
 			GLib::Release(pGoodGuy);
-		if (pBadGuy)
-			GLib::Release(pBadGuy);
+		//if (pBadGuy)
+		//	GLib::Release(pBadGuy);
 
 		// IMPORTANT:  Tell GLib to shutdown, releasing resources.
 		GLib::Shutdown();
@@ -184,7 +279,5 @@ void* LoadFile(const char* i_pFilename, size_t& o_sizeFile)
 
 void RenderPlayer(GLib::Sprite* playerSprite)
 {
-	static GLib::Point2D	playerLocation = { player->location.x, player->location.y };
-
-	GLib::Render(*playerSprite, playerLocation, 0.0f, 0.0f);
+	GLib::Render(*playerSprite, { player->position.x, player->position.y }, 0.0f, 0.0f);
 }

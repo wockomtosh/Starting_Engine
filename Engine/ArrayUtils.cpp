@@ -32,7 +32,7 @@ T* removeFromArray(int removeIndex, T* i_array, int i_arrayLength)
     //If the remove value isn't in the array, this will remove the final value in the array because that gets cut off. There isn't a check for the remove value.
     int newLength = i_arrayLength - 1; //This lets us get rid of a compiler warning.
     T* o_array = (T*)malloc(newLength * sizeof(T));
-    int o_location = 0; //We lose a space when we remove so we need to track the location in our new array
+    int o_location = 0; //We lose a space when we remove so we need to track the position in our new array
     for (int i = 0; i < i_arrayLength; i++)
     {
         if (i != removeIndex && o_location < newLength)

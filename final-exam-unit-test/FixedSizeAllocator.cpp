@@ -9,7 +9,7 @@ FixedSizeAllocator::FixedSizeAllocator(void* memory, size_t size, unsigned int n
 FixedSizeAllocator::~FixedSizeAllocator()
 {
 #ifdef _DEBUG
-	//Check to make sure there are no outstanding allocations (Just log something and free them?)
+	//Check to make sure there are no outstanding allocations (Just log something and free them)
 	if (!blockTracker->AreAllBitsSet())
 	{
 		printf("ERROR: Outstanding allocations left when destroying allocator with size %zu\n", blockSize);

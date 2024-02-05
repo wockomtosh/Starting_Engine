@@ -37,7 +37,7 @@ T* MonsterChase::removeFromArray(int removeIndex, T* i_array, int i_arrayLength)
     //If the remove value isn't in the array, this will remove the final value in the array because that gets cut off. There isn't a check for the remove value.
     int newLength = i_arrayLength - 1; //This lets us get rid of a compiler warning.
     T* o_array = (T*)malloc(newLength * sizeof(T));
-    int o_location = 0; //We lose a space when we remove so we need to track the location in our new array
+    int o_location = 0; //We lose a space when we remove so we need to track the position in our new array
     for (int i = 0; i < i_arrayLength; i++)
     {
         if (i != removeIndex && o_location < newLength)
@@ -145,16 +145,16 @@ void MonsterChase::queryPlayer()
     {
     case 'w':
         //move player up
-        playerPos += Point2D::Up;
+        playerPos += Vector2::Up;
         break;
     case 'a':
-        playerPos += Point2D::Left;
+        playerPos += Vector2::Left;
         break;
     case 's':
-        playerPos += Point2D::Down;
+        playerPos += Vector2::Down;
         break;
     case 'd':
-        playerPos += Point2D::Right;
+        playerPos += Vector2::Right;
         break;
     case 'q':
         exit(0);
@@ -170,67 +170,67 @@ void MonsterChase::RenderMonsters(GLib::Sprite* monsterSprite)
 
     for (int i = 0; i < numMonsters; i++)
     {
-        Point2D newLocation = Point2D(monsters[i].getLocation().getX() * monsterLocationScale + totalOffset.x, monsters[i].getLocation().getY() * monsterLocationScale + totalOffset.y);
+        Vector2 newLocation = Vector2(monsters[i].getLocation().getX() * monsterLocationScale + totalOffset.x, monsters[i].getLocation().getY() * monsterLocationScale + totalOffset.y);
         GLib::Render(*monsterSprite, { static_cast<float>(newLocation.getX()), static_cast<float>(newLocation.getY()) }, 0.0f, 0.0f);
     }
 }
 
 void MonsterChase::Point2DUnitTest()
 {
-    Point2D A(0, 1);
-    Point2D B(2, 3);
+    Vector2 A(0, 1);
+    Vector2 B(2, 3);
 
     // equality
     bool bEqual = A == B;
     assert(bEqual == false);
 
-    bEqual = B == Point2D(2, 3);
+    bEqual = B == Vector2(2, 3);
     assert(bEqual == true);
 
     // Inequality
     bool bNotEqual = A != B;
     assert(bNotEqual == true);
 
-    bNotEqual = B != Point2D(2, 3);
+    bNotEqual = B != Vector2(2, 3);
     assert(bNotEqual == false);
 
-    // Point2D + Point2D
-    Point2D C = A + B;
-    assert(C == Point2D(2, 4));
+    // Vector2 + Vector2
+    Vector2 C = A + B;
+    assert(C == Vector2(2, 4));
 
-    // Point2D - Point2D
+    // Vector2 - Vector2
     C = B - A;
-    assert(C == Point2D(2, 2));
+    assert(C == Vector2(2, 2));
 
-    // Point2D * int
+    // Vector2 * int
     C = A * 2;
-    assert(C == Point2D(0, 2));
+    assert(C == Vector2(0, 2));
 
-    // Point2D / int
-    C = Point2D(6, 4) / 2;
-    assert(C == Point2D(3, 2));
+    // Vector2 / int
+    C = Vector2(6, 4) / 2;
+    assert(C == Vector2(3, 2));
 
-    // int * Point2D
+    // int * Vector2
     C = 2 * B;
-    assert(C == Point2D(4, 6));
+    assert(C == Vector2(4, 6));
 
     // negate
     C = -B;
-    assert(C == Point2D(-2, -3));
+    assert(C == Vector2(-2, -3));
 
-    // Point2D += Point2D
-    B += Point2D(2, 1);
-    assert(B == Point2D(4, 4));
+    // Vector2 += Vector2
+    B += Vector2(2, 1);
+    assert(B == Vector2(4, 4));
 
-    // Point2D -= Point2d
-    B -= Point2D(2, 1);
-    assert(B == Point2D(2, 3));
+    // Vector2 -= Point2d
+    B -= Vector2(2, 1);
+    assert(B == Vector2(2, 3));
 
-    // Point2D *= int
+    // Vector2 *= int
     B *= 2;
-    assert(B == Point2D(4, 6));
+    assert(B == Vector2(4, 6));
 
-    // Point2D /= int
+    // Vector2 /= int
     B /= 2;
-    assert(B == Point2D(2, 3));
+    assert(B == Vector2(2, 3));
 }
