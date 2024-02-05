@@ -49,7 +49,7 @@ void setupPlayer()
 	//This should maybe be inside the GameObject constructor because it's absolutely required for all GameObjects
 
 	Rigidbody* playerBody = new Rigidbody();
-	PhysicsComponent* playerPhysics = new PhysicsComponent(playerBody, 1, { Vector2(), 0 });
+	PhysicsComponent* playerPhysics = new PhysicsComponent(playerBody, .8, { Vector2(), 0 });
 
 	std::map<std::string, void*> components = { {"Rigidbody", playerBody},
 												{"PhysicsComponent", playerPhysics} };
@@ -80,7 +80,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Up * 2, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Up, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
@@ -90,7 +90,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Left * 2, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Left, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
@@ -100,7 +100,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Down * 2, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Down, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
@@ -110,7 +110,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Right * 2, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Right, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
