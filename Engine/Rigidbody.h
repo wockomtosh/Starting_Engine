@@ -13,7 +13,7 @@ struct Acceleration {
 };
 
 struct Rigidbody {
-	GameObject* gameObject;
+	GameObject* gameObject = nullptr;
 	Vector2 velocity = Vector2();
 	float rotation = 0;
 	float maxSpeed = 100;

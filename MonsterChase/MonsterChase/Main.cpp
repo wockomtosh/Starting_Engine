@@ -24,8 +24,8 @@ std::vector<GameObject*> gameObjects;
 MonsterChase* game;
 GameObject* player;
 PhysicsSystem* physicsSystem;
-double prevTime = 0;
-double dt = 0;
+float prevTime = 0;
+float dt = 0;
 
 
 void* LoadFile(const char* i_pFilename, size_t& o_sizeFile);
@@ -47,7 +47,7 @@ void getTick()
 	//Divide the number of counts that have passed by counts per second to get seconds
 	dt = (curTime - prevTime) / (float)countsPerSecond;
 
-	prevTime = curTime;
+	prevTime = static_cast<float>(curTime);
 }
 
 void KeyCallback(unsigned int i_VKeyID, bool bWentDown)
