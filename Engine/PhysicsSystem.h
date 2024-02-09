@@ -1,16 +1,16 @@
 #pragma once
+#include <vector>
 #include "PhysicsComponent.h"
 
 class PhysicsSystem {
 	//Maybe later we'll want a dedicated physics component to handle forces differently, but for now I'm just using the rigidbody
 
-	PhysicsComponent** physicsObjects;
-	int numPhysicsObjects;
+	std::vector<PhysicsComponent*> physicsObjects;
 
 public:
-	PhysicsSystem(PhysicsComponent** physicsObjects, int numPhysicsObjects);
+	PhysicsSystem(std::vector<PhysicsComponent*> physicsObjects);
 
-	void update();
+	void update(float dt);
 
 	void addPhysicsObject(PhysicsComponent* object);
 };

@@ -12,7 +12,7 @@ struct PhysicsComponent {
 	inline void update(float dt) {
 		//Implementing some janky drag. Does this work as expected?
 		rigidbody->velocity -= rigidbody->velocity.normalize() * dragFactor * dt;
-		rigidbody->rotation -= dragFactor * dt;
+		rigidbody->rotation -= rigidbody->rotation * dragFactor * dt;
 		rigidbody->update(dt, forces);
 	}
 };

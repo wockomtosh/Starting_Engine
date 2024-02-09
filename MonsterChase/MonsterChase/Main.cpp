@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <Windows.h>
+#include <vector>
 
 #include <DirectXColors.h>
 
@@ -16,60 +17,40 @@
 
 #include "GameObject.h"
 #include "PhysicsSystem.h"
+#include "Renderer.h"
+
+std::vector<GameObject*> gameObjects;
 
 MonsterChase* game;
 GameObject* player;
 PhysicsSystem* physicsSystem;
-double previousTick;
+double prevTime = 0;
 double dt = 0;
 
 
 void* LoadFile(const char* i_pFilename, size_t& o_sizeFile);
 GLib::Sprite* CreateSprite(const char* i_pFilename);
-void RenderPlayer(GLib::Sprite* playerSprite);
 
 void startTick()
 {
-	previousTick = GetTickCount64();
+	QueryPerformanceCounter((LARGE_INTEGER*)&prevTime);
 }
 
 void getTick()
 {
-	double currentTick = GetTickCount64();
-	dt = (currentTick - previousTick) / 1000; //Divide by 1000 to get it in seconds
+	uint64_t countsPerSecond = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&countsPerSecond);
 
-	std::cout << dt << std::endl;
+	uint64_t curTime = 0;
+	QueryPerformanceCounter((LARGE_INTEGER*)&curTime);
 
-	previousTick = currentTick;
+	//Divide the number of counts that have passed by counts per second to get seconds
+	dt = (curTime - prevTime) / (float)countsPerSecond;
+
+	prevTime = curTime;
 }
 
-void setupPlayer()
-{
-	//Maybe this could be used for any object? Just swap out components as needed?
-	//This should maybe be inside the GameObject constructor because it's absolutely required for all GameObjects
-
-	Rigidbody* playerBody = new Rigidbody();
-	PhysicsComponent* playerPhysics = new PhysicsComponent(playerBody, .8, { Vector2(), 0 });
-
-	std::map<std::string, void*> components = { {"Rigidbody", playerBody},
-												{"PhysicsComponent", playerPhysics} };
-
-	player = new GameObject(Vector2(), components);
-
-	playerBody->gameObject = player;
-
-}
-
-void setupPhysics()
-{
-	//Right now I'm just having the player do physics, I'll need to figure out how to set up the rest later
-	PhysicsComponent** physicsObjects = static_cast<PhysicsComponent**>(malloc(sizeof(PhysicsComponent) * 1));
-	//Here I would normally iterate through all my game objects and find whichever ones have this and add them
-	physicsObjects[0] = static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"));
-	physicsSystem = new PhysicsSystem(physicsObjects, 1);
-}
-
-void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
+void KeyCallback(unsigned int i_VKeyID, bool bWentDown)
 {
 	unsigned int w = 0x57;
 	unsigned int a = 0x41;
@@ -80,7 +61,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Up, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Up * 100, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
@@ -90,7 +71,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Left, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Left * 100, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
@@ -100,7 +81,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Down, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Down * 100, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
@@ -110,7 +91,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	{
 		if (bWentDown)
 		{
-			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Right, 0 };
+			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2::Right * 100, 0 };
 		}
 		else {
 			static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent"))->forces = { Vector2(), 0 };
@@ -120,32 +101,64 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 	const size_t	lenBuffer = 129;
 	char			Buffer[lenBuffer];
 
-    sprintf_s(Buffer, lenBuffer, "VKey 0x%04x went %s\n", i_VKeyID, bWentDown ? "down" : "up");
-    OutputDebugStringA(Buffer);
+	sprintf_s(Buffer, lenBuffer, "VKey 0x%04x went %s\n", i_VKeyID, bWentDown ? "down" : "up");
+	OutputDebugStringA(Buffer);
 #endif // __DEBUG
 }
 
-int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
+void setupPlayer()
 {
-    //game = new MonsterChase();
-    //game->startGame();
-	startTick();
+	//Maybe this could be used for any object? Just swap out components as needed?
+	//This should maybe be inside the GameObject constructor because it's absolutely required for all GameObjects?
+
+	Rigidbody* playerBody = new Rigidbody();
+	PhysicsComponent* playerPhysics = new PhysicsComponent(playerBody, 50, { Vector2(), 0 });
+
+	std::map<std::string, void*> components = { {"Rigidbody", playerBody},
+												{"PhysicsComponent", playerPhysics} };
+
+	player = new GameObject(Vector2(), components);
+	player->orientation = 0;
+
+	playerBody->gameObject = player;
+
+	GLib::Sprite* pGoodGuy = CreateSprite("sprites\\GoodGuy.dds");
+	RenderComponent* playerRender = new RenderComponent(player, pGoodGuy);
+	player->addComponent("RenderComponent", playerRender);
+
+	gameObjects.push_back(player);
+}
+
+void setupPhysics()
+{
+	//Right now I'm just having the player do physics, I'll need to figure out how to set up the rest later
+	std::vector<PhysicsComponent*> physicsObjects = std::vector<PhysicsComponent*>();
+	//TODO Here I would normally iterate through all my game objects and find whichever ones have this and add them
+	physicsObjects.push_back(static_cast<PhysicsComponent*>(player->getComponent("PhysicsComponent")));
+	physicsSystem = new PhysicsSystem(physicsObjects);
+}
+
+void setup()
+{
+	gameObjects = std::vector<GameObject*>();
 
 	setupPlayer();
 
 	setupPhysics();
 
-    // IMPORTANT: first we need to initialize GLib
-    bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "GLibTest", -1, 1024, 768, true);
+	startTick();
+}
+
+int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
+{
+	bool bSuccess = Renderer::initialize(i_hInstance, i_nCmdShow);
 
 	if (bSuccess)
 	{
 		// IMPORTANT (if we want keypress info from GLib): Set a callback for notification of key presses
-		GLib::SetKeyStateChangeCallback(TestKeyCallback);
+		GLib::SetKeyStateChangeCallback(KeyCallback);
 
-		// Create a couple of sprites using our own helper routine CreateSprite
-		GLib::Sprite* pGoodGuy = CreateSprite("sprites\\GoodGuy.dds");
-		//GLib::Sprite* pBadGuy = CreateSprite("sprites\\BadGuy.dds");
+		setup();
 
 		bool bQuit = false;
 
@@ -159,42 +172,17 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 			{
 				getTick();
 
-				//PhysicsSystem portion of the loop
-				//static_cast<Rigidbody*>(player->getComponent("Rigidbody"))->update(dt, { Vector2(100, 100), 0 });
-				physicsSystem->update();
-
-				// IMPORTANT: Tell GLib that we want to start rendering
-				GLib::BeginRendering(DirectX::Colors::Blue);
-				// Tell GLib that we want to render some sprites
-				GLib::Sprites::BeginRendering();
-
-				if (pGoodGuy)
-				{
-					RenderPlayer(pGoodGuy);
-				}
-				//if (pBadGuy)
-				//{
-				//	//game->addRemoveMonsters();
-				//	game->moveMonsters();
-				//	game->RenderMonsters(pBadGuy);
-				//}
-
-				// Tell GLib we're done rendering sprites
-				GLib::Sprites::EndRendering();
-				// IMPORTANT: Tell GLib we're done rendering
-				GLib::EndRendering();
+				physicsSystem->update(dt);
+				
+				Renderer::drawGameObjects(gameObjects);
 			}
 		} while (bQuit == false);
 
-		if (pGoodGuy)
-			GLib::Release(pGoodGuy);
-		//if (pBadGuy)
-		//	GLib::Release(pBadGuy);
-
-		// IMPORTANT:  Tell GLib to shutdown, releasing resources.
-		GLib::Shutdown();
+		//shutdown and free sprites
+		Renderer::shutdown(gameObjects);
 	}
 
+	_CrtDumpMemoryLeaks();
 #if defined _DEBUG
 	_CrtDumpMemoryLeaks();
 #endif // _DEBUG
@@ -275,9 +263,4 @@ void* LoadFile(const char* i_pFilename, size_t& o_sizeFile)
 	o_sizeFile = FileSize;
 
 	return pBuffer;
-}
-
-void RenderPlayer(GLib::Sprite* playerSprite)
-{
-	GLib::Render(*playerSprite, { player->position.x, player->position.y }, 0.0f, 0.0f);
 }

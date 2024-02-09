@@ -15,6 +15,14 @@ GameObject::GameObject(Vector2 startingLocation, std::map<std::string, void*> co
 {
 }
 
+GameObject::GameObject(GameObject &oldObject)
+{
+	name = oldObject.name;
+	position = oldObject.position;
+	orientation = oldObject.orientation;
+	components = oldObject.components;
+}
+
 Vector2 GameObject::getLocation()
 {
 	return position;
@@ -57,4 +65,9 @@ void GameObject::addComponent(const std::string componentName, void* component)
 void GameObject::print()
 {
 	position.print();
+}
+
+GameObject::~GameObject()
+{
+	//TODO: delete components!!!
 }

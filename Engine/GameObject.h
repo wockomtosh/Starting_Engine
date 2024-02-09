@@ -15,6 +15,7 @@ public:
 	GameObject();
 	GameObject(Vector2 startingLocation);
 	GameObject(Vector2 startingLocation, std::map<std::string, void*> components);
+	GameObject(GameObject &oldObject);
 
 	Vector2 getLocation();
 	void setPosition(Vector2 newPosition);
@@ -26,5 +27,5 @@ public:
 
 	void print();
 
-	~GameObject() {}
+	~GameObject();
 };

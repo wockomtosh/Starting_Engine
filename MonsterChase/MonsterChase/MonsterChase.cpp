@@ -94,7 +94,7 @@ void MonsterChase::removeMonster(int index)
 
 void MonsterChase::addMonster()
 {
-    monsters = appendToArray(Monster("Monster", totalMonsters), monsters, numMonsters);
+    //monsters = appendToArray(Monster("Monster", totalMonsters), monsters, numMonsters);
     numMonsters += 1;
     totalMonsters += 1;
 }
