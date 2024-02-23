@@ -6,6 +6,8 @@ struct PhysicsComponent {
 	float dragFactor = 0;
 	Acceleration forces = { Vector2(), 0 };
 	
+	PhysicsComponent() {}
+
 	PhysicsComponent(Rigidbody* rigidbody, float dragFactor, Acceleration forces) :
 		rigidbody(rigidbody), dragFactor(dragFactor), forces(forces) {}
 

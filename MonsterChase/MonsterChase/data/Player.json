@@ -1,0 +1,22 @@
+{
+  "name": "Player",
+  "position": [ 0, 50 ],
+  "controller": {
+    "type": "player",
+    "initializer": {
+      "name": "Joe"
+    }
+  },
+  "components": {
+    "renderable": {
+      "sprite_file": "sprites\\goodguy.dds"
+    },
+    "rigidbody": {
+      "maxSpeed": 100,
+      "maxRotation": 100
+    },
+    "physicsComponent": {
+      "dragFactor": 50
+    }
+  }
+}

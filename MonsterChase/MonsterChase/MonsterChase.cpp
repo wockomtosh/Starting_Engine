@@ -4,7 +4,6 @@
 #include <assert.h>
 
 #include "MonsterChase.h"
-#include "Input.h"
 
 
 template <typename T>
@@ -140,26 +139,26 @@ void MonsterChase::displayPlayer()
 
 void MonsterChase::queryPlayer()
 {
-    char input = getInputChar("Use the WASD keys to move or Q to quit");
-    switch (input)
-    {
-    case 'w':
-        //move player up
-        playerPos += Vector2::Up;
-        break;
-    case 'a':
-        playerPos += Vector2::Left;
-        break;
-    case 's':
-        playerPos += Vector2::Down;
-        break;
-    case 'd':
-        playerPos += Vector2::Right;
-        break;
-    case 'q':
-        exit(0);
-        break;
-    }
+//    char input = getInputChar("Use the WASD keys to move or Q to quit");
+//    switch (input)
+//    {
+//    case 'w':
+//        //move player up
+//        playerPos += Vector2::Up;
+//        break;
+//    case 'a':
+//        playerPos += Vector2::Left;
+//        break;
+//    case 's':
+//        playerPos += Vector2::Down;
+//        break;
+//    case 'd':
+//        playerPos += Vector2::Right;
+//        break;
+//    case 'q':
+//        exit(0);
+//        break;
+//    }
 }
 
 void MonsterChase::RenderMonsters(GLib::Sprite* monsterSprite)
@@ -170,8 +169,8 @@ void MonsterChase::RenderMonsters(GLib::Sprite* monsterSprite)
 
     for (int i = 0; i < numMonsters; i++)
     {
-        Vector2 newLocation = Vector2(monsters[i].getLocation().getX() * monsterLocationScale + totalOffset.x, monsters[i].getLocation().getY() * monsterLocationScale + totalOffset.y);
-        GLib::Render(*monsterSprite, { static_cast<float>(newLocation.getX()), static_cast<float>(newLocation.getY()) }, 0.0f, 0.0f);
+        //Vector2 newLocation = Vector2(monsters[i].getLocation().getX() * monsterLocationScale + totalOffset.x, monsters[i].getLocation().getY() * monsterLocationScale + totalOffset.y);
+        //GLib::Render(*monsterSprite, { static_cast<float>(newLocation.getX()), static_cast<float>(newLocation.getY()) }, 0.0f, 0.0f);
     }
 }
 

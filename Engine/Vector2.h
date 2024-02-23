@@ -23,6 +23,7 @@ public:
 	Vector2 normalize() const;
 	Vector2 getVectorWithMagnitude(float magnitude) const;
 	bool isWithinRangeOf(Vector2 target, float xrange, float yrange) const;
+	Vector2 rotateAroundPoint(Vector2 point, float angle, bool isDegrees = true) const;
 
 	void print();
 
@@ -38,14 +39,19 @@ public:
 
 	~Vector2() {}
 
+	static Vector2 getUnitVectorFromAngle(float degrees);
+
 	static const Vector2 Up;
 	static const Vector2 Down;
 	static const Vector2 Left;
 	static const Vector2 Right;
+	static const Vector2 NULL_VECTOR;
 };
 
 Vector2 operator+(Vector2 lhs, Vector2 rhs);
+Vector2 operator+(Vector2 lhs, float rhs);
 Vector2 operator-(Vector2 lhs, Vector2 rhs);
+Vector2 operator-(Vector2 lhs, float rhs);
 Vector2 operator*(Vector2 lhs, Vector2 rhs);
 Vector2 operator/(Vector2 lhs, Vector2 rhs);
 Vector2 operator*(Vector2 lhs, float rhs);

@@ -2,22 +2,19 @@
 #include "GameObject.h"
 #include "GLib.h"
 
-
-struct RenderComponent {
+struct Renderable {
 	GameObject* gameObject;
 	GLib::Sprite* sprite;
 
-	RenderComponent(GameObject* gameObject, GLib::Sprite* sprite) :
+	Renderable(GameObject* gameObject, GLib::Sprite* sprite) :
 		gameObject(gameObject), sprite(sprite) {}
 
-	~RenderComponent()
+	~Renderable()
 	{
 		GLib::Release(sprite);
 	}
 
 	inline void draw() {
-		//TODO: convert orientation to radians and figure out why passing player orientation breaks it
-
 		GLib::Render(*sprite, { gameObject->position.x, gameObject->position.y }, 0.0f, gameObject->orientation);
 	}
 };

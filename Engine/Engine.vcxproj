@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\External;$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\External;$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\External;$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\External;$(SolutionDir)..\GLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,22 +143,27 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ArrayUtils.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="PhysicsSystem.h" />
+    <ClInclude Include="GameObjectController.h" />
+    <ClInclude Include="GameObjectFactory.h" />
+    <ClInclude Include="LoadFileToBuffer.h" />
+    <ClInclude Include="Orientation.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsComponent.h" />
-    <ClInclude Include="RenderComponent.h" />
+    <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="Renderable.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ArrayUtils.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="PhysicsSystem.cpp" />
+    <ClCompile Include="GameObjectFactory.cpp" />
+    <ClCompile Include="LoadFileToBuffer.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

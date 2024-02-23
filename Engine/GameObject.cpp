@@ -1,21 +1,26 @@
 #include "GameObject.h"
 
 GameObject::GameObject() :
-	position(Vector2()), orientation(0), name(""), components({ {"", nullptr} })
+	name(""), position(Vector2()), orientation(0), components({ {"", nullptr} })
 {
 }
 
-GameObject::GameObject(Vector2 startingLocation) :
-	position(startingLocation), orientation(0), name(""), components({ {"", nullptr} })
+GameObject::GameObject(Vector2 startingPosition) :
+	name(""), position(startingPosition), orientation(0), components({ {"", nullptr} })
 {
 }
 
-GameObject::GameObject(Vector2 startingLocation, std::map<std::string, void*> components) :
-	position(startingLocation), orientation(0), name(""), components(components)
+GameObject::GameObject(Vector2 startingPosition, std::map<std::string, void*> components) :
+	name(""), position(startingPosition), orientation(0), components(components)
 {
 }
 
-GameObject::GameObject(GameObject &oldObject)
+GameObject::GameObject(Vector2 startingPosition, float startingOrientation) :
+	name(""), position(startingPosition), orientation(startingOrientation), components({ {"", nullptr} })
+{
+}
+
+GameObject::GameObject(const GameObject& oldObject)
 {
 	name = oldObject.name;
 	position = oldObject.position;
@@ -23,43 +28,35 @@ GameObject::GameObject(GameObject &oldObject)
 	components = oldObject.components;
 }
 
-Vector2 GameObject::getLocation()
-{
-	return position;
-}
-
-void GameObject::setPosition(Vector2 newLocation)
-{
-	position = newLocation;
-}
-
-std::string GameObject::getName()
-{
-	return name;
-}
-
-void GameObject::setName(std::string newName)
-{
-	name = newName;
-}
-
 void* GameObject::getComponent(const std::string componentName)
 {
 	if (!components.empty()) 
 	{
-		auto component = components.find(componentName);
-		if (component == components.end())
+		auto componentIter = components.find(componentName);
+		if (componentIter == components.end())
 		{
 			return nullptr;
 		}
-		return components[componentName];
+		return componentIter->second;
 	}
 	
 }
 
 void GameObject::addComponent(const std::string componentName, void* component)
 {
-	components[componentName] = component;
+	components.insert({ componentName.c_str(), component });
+}
+
+void* GameObject::ensureComponent(const char* componentName, std::function<void* (void)> componentCreator)
+{
+	auto componentIter = components.find(componentName);
+	if (componentIter == components.end())
+	{
+		void* newComponent = componentCreator();
+		components.insert({ componentName, newComponent });
+		return newComponent;
+	}
+	return componentIter->second;
 }
 
 void GameObject::print()
