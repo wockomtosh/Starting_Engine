@@ -1,22 +1,22 @@
 #include "GameObject.h"
 
 GameObject::GameObject() :
-	name(""), position(Vector2()), orientation(0), components({ {"", nullptr} })
+	name(""), position(Vector2()), orientation(0), components({ {"", nullptr} }), controller(nullptr)
 {
 }
 
 GameObject::GameObject(Vector2 startingPosition) :
-	name(""), position(startingPosition), orientation(0), components({ {"", nullptr} })
+	name(""), position(startingPosition), orientation(0), components({ {"", nullptr} }), controller(nullptr)
 {
 }
 
 GameObject::GameObject(Vector2 startingPosition, std::map<std::string, void*> components) :
-	name(""), position(startingPosition), orientation(0), components(components)
+	name(""), position(startingPosition), orientation(0), components(components), controller(nullptr)
 {
 }
 
 GameObject::GameObject(Vector2 startingPosition, float startingOrientation) :
-	name(""), position(startingPosition), orientation(startingOrientation), components({ {"", nullptr} })
+	name(""), position(startingPosition), orientation(startingOrientation), components({ {"", nullptr} }), controller(nullptr)
 {
 }
 
