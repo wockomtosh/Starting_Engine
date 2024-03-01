@@ -47,6 +47,7 @@ namespace Renderer
 
 		if (sprite)
 		{
+			//Nothing depends on renderables so we don't need to worry about checking if one exists here.
 			Renderable* newRenderable = new Renderable(&gameObject, sprite);
 			Renderer::renderables.push_back(newRenderable);
 			gameObject.addComponent("renderable", newRenderable);

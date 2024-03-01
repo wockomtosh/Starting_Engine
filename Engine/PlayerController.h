@@ -19,4 +19,6 @@ public:
 
 private:
 	void handleKeyPress(unsigned int i_VKeyID, bool bWentDown);
+
+	PhysicsComponent* playerPhysics;
 };

@@ -21,11 +21,15 @@ namespace Physics
 
 	void addRigidbody(GameObject& gameObject, nlohmann::json& rbSection)
 	{
-		//TODO: How do I ensure that the PhysicsComponent points to this Rigidbody when I can't guarantee that it'll be made first?
-		Rigidbody* newRb = new Rigidbody(&gameObject);
+		Rigidbody* rb = static_cast<Rigidbody*>(gameObject.getComponent("rigidbody"));
+		if (rb == nullptr)
+		{
+			rb = new Rigidbody(&gameObject);
+			gameObject.addComponent("rigidbody", rb);
+		}
 
-		float maxSpeed = newRb->maxSpeed;
-		float maxRotation = newRb->maxRotation;
+		float maxSpeed = rb->maxSpeed;
+		float maxRotation = rb->maxRotation;
 		if (rbSection["maxSpeed"].is_number())
 		{
 			maxSpeed = rbSection["maxSpeed"];
@@ -34,13 +38,10 @@ namespace Physics
 		{
 			maxSpeed = rbSection["maxRotation"];
 		}
-
-		gameObject.addComponent("rigidbody", newRb);
 	}
 
 	void addPhysicsObject(GameObject& gameObject, nlohmann::json& physicsSection)
 	{
-		//TODO: Find a better way to handle this.
 		Rigidbody* rb = static_cast<Rigidbody*>(gameObject.ensureComponent("rigidbody", []()
 			{
 				return new Rigidbody();
@@ -53,7 +54,14 @@ namespace Physics
 			dragFactor = physicsSection["dragFactor"];
 		}
 
-		PhysicsComponent* physicsObject = new PhysicsComponent(rb, dragFactor, Acceleration());
+		PhysicsComponent* physicsObject = static_cast<PhysicsComponent*>(gameObject.getComponent("physicsComponent"));
+		if (physicsObject == nullptr)
+		{
+			physicsObject = new PhysicsComponent();
+		}
+		physicsObject->rigidbody = rb;
+		physicsObject->dragFactor = dragFactor;
+		physicsObject->forces = Acceleration();
 
 		physicsObjects.push_back(physicsObject);
 		gameObject.addComponent("physicsComponent", physicsObject);
