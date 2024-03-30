@@ -17,10 +17,87 @@
 #include "Physics.h"
 #include "Renderer.h"
 #include "PlayerController.h"
+#include "Matrix4.h"
+#include "Vector4.h"
 
 std::shared_ptr<GameObject> player;
 float prevTime = 0;
 float dt = 0.0167;
+
+void matrixUnitTest()
+{
+	//Test matrix creation: visual check only
+	Matrix4::CreateIdentity().print();
+	std::cout << std::endl;
+	Matrix4::CreateScale(2, 2, 2).print();
+	std::cout << std::endl;
+	Matrix4::CreateTranslation(1, 2, 3).print();
+	std::cout << std::endl;
+	Matrix4::CreateXRotation(3.14).print();
+	std::cout << std::endl;
+	Matrix4::CreateYRotation(3.14).print();
+	std::cout << std::endl;
+	Matrix4::CreateZRotation(3.14).print();
+	std::cout << std::endl;
+
+	//Test matrix multiplication
+	Matrix4 rotTransComp = Matrix4::CreateTranslation(1, 2, 3) * Matrix4::CreateXRotation(3.1415 / 4);
+	assert(rotTransComp.Row(2) == Vector4(0, 0.707123, 0.70709, 2));
+	rotTransComp.print();
+	std::cout << std::endl;
+
+	//Test inverse and transpose
+	Matrix4 tempMat = rotTransComp.GetInverse();
+	assert(tempMat.Row(3) == Vector4(0, 0.70709, 0.707123, -3.53555));
+	tempMat.print();
+	std::cout << std::endl;
+	tempMat = rotTransComp.GetInverseRotTrans();
+	assert(tempMat.Row(3) == Vector4(0, 0.70709, 0.707123, -3.53555));
+	tempMat.print();
+	std::cout << std::endl;
+
+	Matrix4 testingMatrix = Matrix4(
+		1, 3, 3, 4,
+		5, 2, 7, 8,
+		9, 5, 6, 8,
+		4, 7, 7, 1);
+	testingMatrix.print();
+	std::cout << std::endl;
+	testingMatrix = testingMatrix.GetInverse();
+	testingMatrix.print();
+	assert(testingMatrix.Row(2) == Vector4(0.27362, -0.214724, 0.0736196, 0.0343558));
+	std::cout << std::endl;
+	//Answer to ^ checked using https://www.emathhelp.net/en/calculators/linear-algebra/inverse-of-matrix-calculator/?i=%5B%5B1%2C3%2C3%2C4%5D%2C%5B5%2C2%2C7%2C8%5D%2C%5B9%2C5%2C6%2C8%5D%2C%5B4%2C7%2C7%2C1%5D%5D&m=a
+
+	rotTransComp.GetTranspose().print();
+	std::cout << std::endl;
+
+	//Test matrix-vector multiplication
+	Vector4 testCoordinate = Vector4(0, 0, 0, 1);
+	Vector4 testCoordinate2 = Vector4(1, 1, 1, 1);
+
+	Vector4 temp = rotTransComp * testCoordinate;
+	assert(temp == Vector4(1, 2, 3, 1));
+	temp.print();
+	std::cout << std::endl;
+	std::cout << std::endl;
+	temp = testCoordinate * rotTransComp;
+	assert(temp == Vector4(0, 0, 0, 1));
+	temp.print();
+	std::cout << std::endl;
+	std::cout << std::endl;
+
+	temp = rotTransComp * testCoordinate2;
+	assert(temp == Vector4(2, 3.41421, 3.00003, 1));
+	temp.print();
+	std::cout << std::endl;
+	std::cout << std::endl;
+	temp = testCoordinate2 * rotTransComp;
+	assert(temp == Vector4(1, 3.27826e-05, 1.41421, 7));
+	temp.print();
+	std::cout << std::endl;
+	std::cout << std::endl;
+}
 
 void startTick()
 {
@@ -53,6 +130,8 @@ void setup()
 
 int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
+	//matrixUnitTest();
+
 	bool bSuccess = Renderer::initialize(i_hInstance, i_nCmdShow);
 	Physics::initialize();
 

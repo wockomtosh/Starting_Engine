@@ -1,6 +1,6 @@
 #include "PlayerController.h"
 
-PlayerController::PlayerController(GameObject* player) : 
+PlayerController::PlayerController(GameObject* player) :
 	player(player), playerPhysics(nullptr)
 {
 	// IMPORTANT (if we want keypress info from GLib): Set a callback for notification of key presses
@@ -16,6 +16,7 @@ void PlayerController::update(GameObject& controlledObject)
 void PlayerController::createPlayerController(GameObject& gameObject, nlohmann::json& initializerSection)
 {
 	//TODO: currently the controller and the gameObject hold refs to each other, that seems like it could be a problem?
+	//TODO: fix this!!
 	PlayerController* newController = new PlayerController(&gameObject);
 	gameObject.setCurrentController(newController);
 
@@ -25,6 +26,7 @@ void PlayerController::createPlayerController(GameObject& gameObject, nlohmann::
 			return new PhysicsComponent();
 		}));
 	gameObject.addComponent("physicsComponent", physics);
+	//TODO: fix this!!
 	newController->playerPhysics = physics;
 }
 
