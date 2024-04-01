@@ -8,17 +8,18 @@
 
 class PlayerController : public GameObjectController 
 {
-	std::shared_ptr<GameObject> player;
+	std::weak_ptr<GameObject> player;
 
 public:
-	PlayerController(GameObject* player);
+	PlayerController(std::weak_ptr<GameObject> player);
+	PlayerController(const PlayerController& other);
 
-	virtual void update(GameObject& controlledObject) override;
+	void update(GameObject& controlledObject);
 	
-	static void createPlayerController(GameObject& gameObject, nlohmann::json& physicsSection);
+	static void createPlayerController(std::shared_ptr<GameObject> gameObject, nlohmann::json& physicsSection);
 
 private:
 	void handleKeyPress(unsigned int i_VKeyID, bool bWentDown);
 
-	PhysicsComponent* playerPhysics;
+	std::weak_ptr<PhysicsComponent> playerPhysics;
 };

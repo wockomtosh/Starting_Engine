@@ -10,7 +10,7 @@ GameObject::GameObject(Vector2 startingPosition) :
 {
 }
 
-GameObject::GameObject(Vector2 startingPosition, std::map<std::string, void*> components) :
+GameObject::GameObject(Vector2 startingPosition, std::map<std::string, std::shared_ptr<void>> components) :
 	name(""), position(startingPosition), orientation(0), components(components), controller(nullptr)
 {
 }
@@ -28,31 +28,31 @@ GameObject::GameObject(const GameObject& oldObject)
 	components = oldObject.components;
 }
 
-void* GameObject::getComponent(const std::string componentName)
+std::shared_ptr<void> GameObject::getComponent(const std::string componentName)
 {
 	if (!components.empty()) 
 	{
 		auto componentIter = components.find(componentName);
 		if (componentIter == components.end())
 		{
-			return nullptr;
+			return std::shared_ptr<void>();
 		}
 		return componentIter->second;
 	}
 	
 }
 
-void GameObject::addComponent(const std::string componentName, void* component)
+void GameObject::addComponent(const std::string componentName, std::shared_ptr<void> component)
 {
 	components.insert({ componentName.c_str(), component });
 }
 
-void* GameObject::ensureComponent(const char* componentName, std::function<void* (void)> componentCreator)
+std::shared_ptr<void> GameObject::ensureComponent(std::string componentName, std::function<std::shared_ptr<void> (void)> componentCreator)
 {
 	auto componentIter = components.find(componentName);
 	if (componentIter == components.end())
 	{
-		void* newComponent = componentCreator();
+		std::shared_ptr<void> newComponent = componentCreator();
 		components.insert({ componentName, newComponent });
 		return newComponent;
 	}
@@ -66,5 +66,9 @@ void GameObject::print()
 
 GameObject::~GameObject()
 {
-	//TODO: delete components!!!
+	//Delete the components
+	for (auto iter = components.begin(); iter != components.end(); iter++)
+	{
+		iter->second.reset();
+	}
 }

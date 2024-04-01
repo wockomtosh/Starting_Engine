@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <DirectXColors.h>
+#include <memory>
 #include "GLib.h"
 #include "GameObject.h"
 #include "Renderable.h"
@@ -11,7 +12,7 @@ namespace Renderer {
 	void render();
 	void shutdown();
 
-	void createRenderable(GameObject& gameObject, nlohmann::json& renderSection);
+	void createRenderable(std::shared_ptr<GameObject> gameObject, nlohmann::json& renderSection);
 
 	GLib::Sprite* CreateSprite(const char* i_Filename);
 }

@@ -3,7 +3,7 @@
 
 namespace Physics
 {
-	std::vector<PhysicsComponent*> physicsObjects;
+	std::vector<std::weak_ptr<PhysicsComponent>> physicsObjects;
 
 	void initialize()
 	{
@@ -15,17 +15,20 @@ namespace Physics
 	{
 		for (int i = 0; i < physicsObjects.size(); i++)
 		{
-			physicsObjects[i]->update(dt);
+			if (std::shared_ptr<PhysicsComponent> pObject = physicsObjects[i].lock())
+			{
+				pObject->update(dt);
+			}
 		}
 	}
 
-	void addRigidbody(GameObject& gameObject, nlohmann::json& rbSection)
+	void addRigidbody(std::shared_ptr<GameObject> gameObject, nlohmann::json& rbSection)
 	{
-		Rigidbody* rb = static_cast<Rigidbody*>(gameObject.getComponent("rigidbody"));
+		std::shared_ptr<Rigidbody> rb = std::static_pointer_cast<Rigidbody>(gameObject->getComponent("rigidbody"));
 		if (rb == nullptr)
 		{
-			rb = new Rigidbody(&gameObject);
-			gameObject.addComponent("rigidbody", rb);
+			rb = std::make_shared<Rigidbody>(Rigidbody(gameObject));
+			gameObject->addComponent("rigidbody", rb);
 		}
 
 		float maxSpeed = rb->maxSpeed;
@@ -40,13 +43,13 @@ namespace Physics
 		}
 	}
 
-	void addPhysicsObject(GameObject& gameObject, nlohmann::json& physicsSection)
+	void addPhysicsObject(std::shared_ptr<GameObject> gameObject, nlohmann::json& physicsSection)
 	{
-		Rigidbody* rb = static_cast<Rigidbody*>(gameObject.ensureComponent("rigidbody", []()
+		std::shared_ptr<Rigidbody> rb = std::static_pointer_cast<Rigidbody>(gameObject->ensureComponent("rigidbody", []()
 			{
-				return new Rigidbody();
+				return std::make_shared<Rigidbody>(Rigidbody());
 			}));
-		rb->gameObject = &gameObject;
+		rb->gameObject = gameObject;
 
 		float dragFactor = 0;
 		if (physicsSection["dragFactor"].is_number())
@@ -54,17 +57,17 @@ namespace Physics
 			dragFactor = physicsSection["dragFactor"];
 		}
 
-		PhysicsComponent* physicsObject = static_cast<PhysicsComponent*>(gameObject.getComponent("physicsComponent"));
+		std::shared_ptr<PhysicsComponent> physicsObject = std::static_pointer_cast<PhysicsComponent>(gameObject->getComponent("physicsComponent"));
 		if (physicsObject == nullptr)
 		{
-			physicsObject = new PhysicsComponent();
+			physicsObject = std::make_shared<PhysicsComponent>(PhysicsComponent());
 		}
 		physicsObject->rigidbody = rb;
 		physicsObject->dragFactor = dragFactor;
 		physicsObject->forces = Acceleration();
 
 		physicsObjects.push_back(physicsObject);
-		gameObject.addComponent("physicsComponent", physicsObject);
+		gameObject->addComponent("physicsComponent", physicsObject);
 	}
 }
 

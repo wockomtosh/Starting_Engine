@@ -1,10 +1,11 @@
 #include "Renderer.h"
 #include "GameObjectFactory.h"
 #include "LoadFileToBuffer.h"
+#include <iostream>
 
 namespace Renderer 
 {
-	std::vector<Renderable*> renderables;
+	std::vector<std::weak_ptr<Renderable>> renderables;
 
 	bool initialize(HINSTANCE i_hInstance, int i_CmdShow)
 	{
@@ -19,7 +20,12 @@ namespace Renderer
 
 		for (int i = 0; i < renderables.size(); i++)
 		{
-			renderables[i]->draw();
+			//renderables[i]->draw();
+			if (std::shared_ptr<Renderable> renderable = renderables[i].lock())
+			{
+				std::cout << renderable->sprite << std::endl;
+				renderable->draw();
+			}
 		}
 
 		GLib::Sprites::EndRendering();
@@ -28,17 +34,11 @@ namespace Renderer
 
 	void shutdown()
 	{
-		//TODO: Free all sprites here?
-		for (int i = 0; i < renderables.size(); i++)
-		{
-			GLib::Release(renderables[i]->sprite);
-		}
-
 		// IMPORTANT:  Tell GLib to shutdown, releasing resources.
 		GLib::Shutdown();
 	}
 
-	void createRenderable(GameObject& gameObject, nlohmann::json& renderSection)
+	void createRenderable(std::shared_ptr<GameObject> gameObject, nlohmann::json& renderSection)
 	{
 		assert(renderSection["sprite_file"].is_string());
 
@@ -48,9 +48,9 @@ namespace Renderer
 		if (sprite)
 		{
 			//Nothing depends on renderables so we don't need to worry about checking if one exists here.
-			Renderable* newRenderable = new Renderable(&gameObject, sprite);
+			std::shared_ptr<Renderable> newRenderable = std::make_shared<Renderable>(Renderable(gameObject, sprite));
 			Renderer::renderables.push_back(newRenderable);
-			gameObject.addComponent("renderable", newRenderable);
+			gameObject->addComponent("renderable", newRenderable);
 		}
 	}
 

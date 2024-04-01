@@ -5,8 +5,8 @@ using json = nlohmann::json;
 
 namespace GameObjectFactory
 {
-	std::map<std::string, std::function<void(GameObject&, nlohmann::json&)>> controllerCreators;
-	std::map<std::string, std::function<void(GameObject&, nlohmann::json&)>> componentCreators;
+	std::map<std::string, std::function<void(std::shared_ptr<GameObject>, nlohmann::json&)>> controllerCreators;
+	std::map<std::string, std::function<void(std::shared_ptr<GameObject>, nlohmann::json&)>> componentCreators;
 
 	std::shared_ptr<GameObject> createBaseGameObject(json jsonData)
 	{
@@ -28,7 +28,7 @@ namespace GameObjectFactory
 		return newObject;
 	}
 
-	void createComponents(GameObject& newObject, json jsonData) 
+	void createComponents(std::shared_ptr<GameObject> newObject, json jsonData)
 	{
 		if (jsonData.contains("components"))
 		{
@@ -45,7 +45,7 @@ namespace GameObjectFactory
 		}
 	}
 
-	void createControllers(GameObject& newObject, json jsonData)
+	void createControllers(std::shared_ptr<GameObject> newObject, json jsonData)
 	{
 		if (jsonData.contains("controller"))
 		{
@@ -70,20 +70,20 @@ namespace GameObjectFactory
 		{
 			std::shared_ptr<GameObject> newObject = createBaseGameObject(jsonData);
 
-			createComponents(*newObject, jsonData);
-			createControllers(*newObject, jsonData);
+			createComponents(newObject, jsonData);
+			createControllers(newObject, jsonData);
 			
 			return newObject;
 		}
 		return nullptr;
 	}
 
-	void RegisterControllerCreator(const std::string& i_ControllerName, std::function<void(GameObject&, nlohmann::json&)> i_ControllerCreator)
+	void RegisterControllerCreator(const std::string& i_ControllerName, std::function<void(std::shared_ptr<GameObject>, nlohmann::json&)> i_ControllerCreator)
 	{
 		controllerCreators.insert({ i_ControllerName, i_ControllerCreator });
 	}
 
-	void RegisterComponentCreator(const std::string& i_ComponentName, std::function<void(GameObject&, nlohmann::json&)> i_ComponentCreator)
+	void RegisterComponentCreator(const std::string& i_ComponentName, std::function<void(std::shared_ptr<GameObject>, nlohmann::json&)> i_ComponentCreator)
 	{
 		componentCreators.insert({ i_ComponentName, i_ComponentCreator });
 	}

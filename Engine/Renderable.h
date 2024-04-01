@@ -1,13 +1,20 @@
 #pragma once
+#include <memory>
 #include "GameObject.h"
 #include "GLib.h"
 
 struct Renderable {
-	GameObject* gameObject;
+	std::weak_ptr<GameObject> gameObject;
 	GLib::Sprite* sprite;
 
-	Renderable(GameObject* gameObject, GLib::Sprite* sprite) :
+	Renderable(std::weak_ptr<GameObject> gameObject, GLib::Sprite* sprite) :
 		gameObject(gameObject), sprite(sprite) {}
+
+	Renderable(const Renderable& other)
+	{
+		gameObject = other.gameObject;
+		sprite = other.sprite;
+	}
 
 	~Renderable()
 	{
@@ -15,6 +22,9 @@ struct Renderable {
 	}
 
 	inline void draw() {
-		GLib::Render(*sprite, { gameObject->position.x, gameObject->position.y }, 0.0f, gameObject->orientation);
+		if (auto object = gameObject.lock())
+		{
+			GLib::Render(*sprite, { object->position.x, object->position.y }, 0.0f, object->orientation);
+		}
 	}
 };

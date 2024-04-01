@@ -19,14 +19,14 @@ struct Acceleration {
 };
 
 struct Rigidbody {
-	GameObject* gameObject = nullptr;
+	std::weak_ptr<GameObject> gameObject;
 	Vector2 velocity = Vector2();
 	float rotation = 0;
 	float maxSpeed = 100;
 	float maxRotation = 100;
 
 	Rigidbody() {}
-	Rigidbody(GameObject* i_gameObject);
+	Rigidbody(std::weak_ptr<GameObject> i_gameObject);
 	~Rigidbody() {}
 
 	void update(float dt, Acceleration acceleration);
