@@ -3,9 +3,7 @@
 PlayerController::PlayerController(std::weak_ptr<GameObject> player) :
 	player(player), playerPhysics(std::weak_ptr<PhysicsComponent>())
 {
-	// IMPORTANT (if we want keypress info from GLib): Set a callback for notification of key presses
-	//TODO: Understand std::bind better. 
-	GLib::SetKeyStateChangeCallback(std::bind(&PlayerController::handleKeyPress, this, std::placeholders::_1, std::placeholders::_2));
+	
 }
 
 PlayerController::PlayerController(const PlayerController& other)
@@ -33,6 +31,10 @@ void PlayerController::createPlayerController(std::shared_ptr<GameObject> gameOb
 	gameObject->addComponent("physicsComponent", physics);
 	//TODO: fix this!!
 	newController->playerPhysics = physics;
+
+	// IMPORTANT (if we want keypress info from GLib): Set a callback for notification of key presses
+	//TODO: Understand std::bind better. 
+	GLib::SetKeyStateChangeCallback(std::bind(&PlayerController::handleKeyPress, newController, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PlayerController::handleKeyPress(unsigned int i_VKeyID, bool bWentDown)
