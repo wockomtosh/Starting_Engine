@@ -157,7 +157,7 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 
 				Physics::update(dt);
 				
-				//Renderer::render();
+				Renderer::render();
 			}
 		} while (bQuit == false);
 
