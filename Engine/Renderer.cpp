@@ -48,7 +48,7 @@ namespace Renderer
 		if (sprite)
 		{
 			//Nothing depends on renderables so we don't need to worry about checking if one exists here.
-			std::shared_ptr<Renderable> newRenderable = std::make_shared<Renderable>(Renderable(gameObject, sprite));
+			std::shared_ptr<Renderable> newRenderable = std::make_shared<Renderable>(gameObject, sprite);
 			Renderer::renderables.push_back(newRenderable);
 			gameObject->addComponent("renderable", newRenderable);
 		}
