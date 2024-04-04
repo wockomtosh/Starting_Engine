@@ -20,13 +20,13 @@ void PlayerController::update(GameObject& controlledObject)
 void PlayerController::createPlayerController(std::shared_ptr<GameObject> gameObject, nlohmann::json& initializerSection)
 {
 	//The gameObject should hold a shared_ptr to the controller, but the controller should hold a weak_ptr to the gameObject
-	std::shared_ptr<PlayerController> newController = std::make_shared<PlayerController>(PlayerController(gameObject));
+	std::shared_ptr<PlayerController> newController = std::make_shared<PlayerController>(gameObject);
 	gameObject->setCurrentController(newController);
 
 	//The physics component relies on the rigidbody. Do I need to call some function to also ensure the rigidbody?
 	std::shared_ptr<PhysicsComponent> physics = std::static_pointer_cast<PhysicsComponent>(gameObject->ensureComponent("physicsComponent", []()
 		{
-			return std::make_shared<PhysicsComponent>(PhysicsComponent());
+			return std::make_shared<PhysicsComponent>();
 		}));
 	gameObject->addComponent("physicsComponent", physics);
 	//TODO: fix this!!

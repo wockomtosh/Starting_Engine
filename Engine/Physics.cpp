@@ -27,7 +27,7 @@ namespace Physics
 		std::shared_ptr<Rigidbody> rb = std::static_pointer_cast<Rigidbody>(gameObject->getComponent("rigidbody"));
 		if (rb == nullptr)
 		{
-			rb = std::make_shared<Rigidbody>(Rigidbody(gameObject));
+			rb = std::make_shared<Rigidbody>(gameObject);
 			gameObject->addComponent("rigidbody", rb);
 		}
 
@@ -47,7 +47,7 @@ namespace Physics
 	{
 		std::shared_ptr<Rigidbody> rb = std::static_pointer_cast<Rigidbody>(gameObject->ensureComponent("rigidbody", []()
 			{
-				return std::make_shared<Rigidbody>(Rigidbody());
+				return std::make_shared<Rigidbody>();
 			}));
 		rb->gameObject = gameObject;
 
@@ -60,7 +60,7 @@ namespace Physics
 		std::shared_ptr<PhysicsComponent> physicsObject = std::static_pointer_cast<PhysicsComponent>(gameObject->getComponent("physicsComponent"));
 		if (physicsObject == nullptr)
 		{
-			physicsObject = std::make_shared<PhysicsComponent>(PhysicsComponent());
+			physicsObject = std::make_shared<PhysicsComponent>();
 		}
 		physicsObject->rigidbody = rb;
 		physicsObject->dragFactor = dragFactor;
