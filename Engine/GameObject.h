@@ -33,11 +33,11 @@ public:
 		controller = newController;
 	}
 
-	inline void update()
+	inline void update(float dt)
 	{
 		if (controller)
 		{
-			controller->update(*this);
+			controller->update(dt, *this);
 		}
 	}
 

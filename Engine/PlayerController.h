@@ -14,7 +14,7 @@ public:
 	PlayerController(std::weak_ptr<GameObject> player);
 	PlayerController(const PlayerController& other);
 
-	void update(GameObject& controlledObject);
+	void update(float dt, GameObject& controlledObject);
 	
 	static void createPlayerController(std::shared_ptr<GameObject> gameObject, nlohmann::json& physicsSection);
 

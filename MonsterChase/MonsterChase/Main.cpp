@@ -126,6 +126,7 @@ void setupPlayer()
 void setup()
 {
 	startTick();
+	getTick();
 }
 
 int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
@@ -154,6 +155,8 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 			if (!bQuit)
 			{
 				getTick();
+
+				player->update(dt);
 
 				Physics::update(dt);
 				
