@@ -1,0 +1,14 @@
+{
+  "name": "Test4",
+  "position": [ 20, 1 ],
+  "components": {
+    "rigidbody": {
+      "maxSpeed": 100,
+      "maxRotation": 100
+    },
+    "AABB": {
+      "center": [ 0, 0 ],
+      "extents": [ 10, 10 ]
+    }
+  }
+}

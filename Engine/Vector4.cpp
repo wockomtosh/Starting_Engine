@@ -1,5 +1,6 @@
 #include "Vector4.h"
 #include "Vector3.h"
+#include "Vector2.h"
 #include <iostream>
 
 Vector4::Vector4() : 
@@ -7,6 +8,9 @@ Vector4::Vector4() :
 
 Vector4::Vector4(float i_x, float i_y, float i_z, float i_w) :
 	x(i_x), y(i_y), z(i_z), w(i_w) {}
+
+Vector4::Vector4(const Vector2& i_other, float i_z, float i_w) :
+	x(i_other.x), y(i_other.y), z(i_z), w(i_w) {}
 
 Vector4::Vector4(const Vector3& i_other, float i_w) :
 	x(i_other.x), y(i_other.y), z(i_other.z), w(i_w) {}

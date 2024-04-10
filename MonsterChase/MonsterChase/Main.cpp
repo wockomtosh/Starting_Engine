@@ -16,11 +16,13 @@
 #include "GameObject.h"
 #include "Physics.h"
 #include "Renderer.h"
+#include "Collision.h"
 #include "PlayerController.h"
 #include "Matrix4.h"
 #include "Vector4.h"
 
 std::shared_ptr<GameObject> player;
+std::shared_ptr<GameObject> player2;
 float prevTime = 0;
 float dt = 0.0167;
 
@@ -99,6 +101,49 @@ void matrixUnitTest()
 	std::cout << std::endl;
 }
 
+void collisionUnitTest()
+{
+	std::shared_ptr<GameObject> test1 = GameObjectFactory::CreateGameObject("data\\TestAABB1.json");
+	std::shared_ptr<GameObject> test2 = GameObjectFactory::CreateGameObject("data\\TestAABB2.json");
+	std::shared_ptr<GameObject> test3 = GameObjectFactory::CreateGameObject("data\\TestAABB3.json");
+	std::shared_ptr<GameObject> test4 = GameObjectFactory::CreateGameObject("data\\TestAABB4.json");
+	std::shared_ptr<GameObject> test5 = GameObjectFactory::CreateGameObject("data\\TestAABB5.json");
+	std::shared_ptr<GameObject> test6 = GameObjectFactory::CreateGameObject("data\\TestAABB6.json");
+
+	std::shared_ptr<Rigidbody> rb1 = std::static_pointer_cast<Rigidbody>(test1->getComponent("rigidbody"));
+	std::shared_ptr<Rigidbody> rb2 = std::static_pointer_cast<Rigidbody>(test2->getComponent("rigidbody"));
+	std::shared_ptr<Rigidbody> rb3 = std::static_pointer_cast<Rigidbody>(test3->getComponent("rigidbody"));
+	std::shared_ptr<Rigidbody> rb4 = std::static_pointer_cast<Rigidbody>(test4->getComponent("rigidbody"));
+	std::shared_ptr<Rigidbody> rb5 = std::static_pointer_cast<Rigidbody>(test5->getComponent("rigidbody"));
+	std::shared_ptr<Rigidbody> rb6 = std::static_pointer_cast<Rigidbody>(test6->getComponent("rigidbody"));
+
+	std::shared_ptr<AABB> aabb1 = std::static_pointer_cast<AABB>(test1->getComponent("AABB"));
+	std::shared_ptr<AABB> aabb2 = std::static_pointer_cast<AABB>(test2->getComponent("AABB"));
+	std::shared_ptr<AABB> aabb3 = std::static_pointer_cast<AABB>(test3->getComponent("AABB"));
+	std::shared_ptr<AABB> aabb4 = std::static_pointer_cast<AABB>(test4->getComponent("AABB"));
+	std::shared_ptr<AABB> aabb5 = std::static_pointer_cast<AABB>(test5->getComponent("AABB"));
+	std::shared_ptr<AABB> aabb6 = std::static_pointer_cast<AABB>(test6->getComponent("AABB"));
+
+	//I'll be testing with dt=1 to make it easier to design test cases
+	
+	rb1->velocity = Vector2(1, 0);
+	rb2->velocity = Vector2(-1, 0);
+	//Super simple check, both moving and they're colliding
+	assert(aabb1->isColliding(1, aabb2));
+	//They won't collide yet in this one
+	assert(!aabb1->isColliding(1, aabb3));
+	//They won't end the frame colliding, but they start by colliding so it's true
+	assert(aabb1->isColliding(1, aabb4));
+
+	rb5->velocity = Vector2(-1, -1);
+	//Collide in the middle of the frame (corners hitting)
+	assert(aabb5->isColliding(1, aabb6));
+	//Rotate by roughly pi/4 radians or 45 degrees so that it will miss instead of tapping corners
+	//This doesn't figure out until the last Y axis check that it isn't colliding. 
+	test5->orientation = .785;
+	assert(!aabb5->isColliding(1, aabb6));
+}
+
 void startTick()
 {
 	QueryPerformanceCounter((LARGE_INTEGER*)&prevTime);
@@ -121,6 +166,7 @@ void getTick()
 void setupPlayer()
 {
 	player = GameObjectFactory::CreateGameObject("data\\Player.json");
+	player2 = GameObjectFactory::CreateGameObject("data\\Player2.json");
 }
 
 void setup()
@@ -131,10 +177,13 @@ void setup()
 
 int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
-	//matrixUnitTest();
+	
 
 	bool bSuccess = Renderer::initialize(i_hInstance, i_nCmdShow);
 	Physics::initialize();
+	Collision::initialize();
+
+	//collisionUnitTest();
 
 	GameObjectFactory::RegisterControllerCreator("player", &PlayerController::createPlayerController);
 
@@ -157,8 +206,10 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 				getTick();
 
 				player->update(dt);
+				player2->update(dt);
 
 				Physics::update(dt);
+				Collision::update(dt);
 				
 				Renderer::render();
 			}

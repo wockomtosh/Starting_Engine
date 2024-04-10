@@ -156,6 +156,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="data\Player.json" />
+    <None Include="data\Player2.json" />
+    <None Include="data\TestAABB1.json" />
+    <None Include="data\TestAABB2.json" />
+    <None Include="data\TestAABB3.json" />
+    <None Include="data\TestAABB4.json" />
+    <None Include="data\TestAABB5.json" />
+    <None Include="data\TestAABB6.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

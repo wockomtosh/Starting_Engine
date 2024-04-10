@@ -75,6 +75,12 @@
     <ClInclude Include="Vector3.h">
       <Filter>Source Files\DataTypes</Filter>
     </ClInclude>
+    <ClInclude Include="AxisAlignedBoundingBox.h">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Physics.cpp">
@@ -109,6 +115,12 @@
     </ClCompile>
     <ClCompile Include="Matrix4.cpp">
       <Filter>Source Files\DataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="AxisAlignedBoundingBox.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

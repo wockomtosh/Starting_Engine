@@ -43,5 +43,26 @@
     <None Include="data\Player.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="data\TestAABB1.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\TestAABB2.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\TestAABB3.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\TestAABB4.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\TestAABB5.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\TestAABB6.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\Player2.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

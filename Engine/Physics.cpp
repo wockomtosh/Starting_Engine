@@ -1,5 +1,4 @@
 #include "Physics.h"
-#include <malloc.h>
 
 namespace Physics
 {
@@ -45,11 +44,11 @@ namespace Physics
 
 	void addPhysicsObject(std::shared_ptr<GameObject> gameObject, nlohmann::json& physicsSection)
 	{
-		std::shared_ptr<Rigidbody> rb = std::static_pointer_cast<Rigidbody>(gameObject->ensureComponent("rigidbody", []()
+		std::shared_ptr<Rigidbody> rb = std::static_pointer_cast<Rigidbody>(gameObject->ensureComponent("rigidbody", 
+			[gameObject]()
 			{
-				return std::make_shared<Rigidbody>();
+				return std::make_shared<Rigidbody>(gameObject);
 			}));
-		rb->gameObject = gameObject;
 
 		float dragFactor = 0;
 		if (physicsSection["dragFactor"].is_number())

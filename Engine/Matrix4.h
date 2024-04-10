@@ -47,7 +47,7 @@ public:
 	static Matrix4 CreateYRotation(float i_RotationRadians);
 	static Matrix4 CreateZRotation(float i_RotationRadians);
 
-	static Matrix4 CreateTranslation(float i_transX, float i_transY, float i_transZ);
+	static Matrix4 CreateTranslation(float i_transX, float i_transY, float i_transZ = 0.0f);
 	inline static Matrix4 CreateTranslation(const Vector3& i_trans)
 	{
 		return CreateTranslation(i_trans.x, i_trans.y, i_trans.z);
