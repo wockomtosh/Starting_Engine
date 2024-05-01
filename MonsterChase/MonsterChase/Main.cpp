@@ -183,8 +183,6 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 	Physics::initialize();
 	Collision::initialize();
 
-	//collisionUnitTest();
-
 	GameObjectFactory::RegisterControllerCreator("player", &PlayerController::createPlayerController);
 
 	setupPlayer();
