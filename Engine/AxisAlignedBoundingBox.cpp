@@ -17,7 +17,7 @@ bool AABB::isPointWithinBox(Vector2 point)
 	return isPointWithinBox(point.x, point.y);
 }
 
-//If neither are rotated then we can just do the simple check
+//If neither are rotated then we can just do the simple check (doesn't account for velocity though)
 bool simpleCollisionCheck(AABB* first, Vector2 firstPos, AABB* second, Vector2 secondPos)
 {
 	bool xSeparation = fabs((firstPos.x + first->center.x) - (secondPos.x + second->center.x))
@@ -33,7 +33,7 @@ bool simpleCollisionCheck(AABB* first, Vector2 firstPos, AABB* second, Vector2 s
 	return !ySeparation;
 }
 
-Matrix4 getAToBMatrix(AABB* a, AABB* b)
+inline Matrix4 getAToBMatrix(AABB* a, AABB* b)
 {
 	//Remember that this assumes column vectors
 	return b->getToLocalMatrix() * a->getToWorldMatrix();
@@ -69,7 +69,7 @@ bool checkAInBStationary(AABB* a, AABB* b)
 }
 
 //Because we need to check all the open/close times at the end, this returns the latest close time followed by the earliest open time
-bool checkAInBMoving(float dt, AABB* a, Vector2 aVel, AABB* b, Vector2 bVel, float& o_closeTime, float& o_openTime)
+bool checkAInBMoving(float dt, AABB* a, Vector2 aVel, AABB* b, Vector2 bVel, float& o_closeTime, float& o_openTime, Vector4& o_closeNormal)
 {
 	Matrix4 aToB = getAToBMatrix(a, b);
 
@@ -132,6 +132,9 @@ bool checkAInBMoving(float dt, AABB* a, Vector2 aVel, AABB* b, Vector2 bVel, flo
 		if (xCloseTime > o_closeTime)
 		{
 			o_closeTime = xCloseTime;
+			//Also replace the latest close normal. We're in B so transform the x-axis back to the world.
+			//We can't guarantee if we're checking A in B or B in A so we'll figure out direction later.
+			o_closeNormal = b->getToWorldMatrix() * Vector4(1, 0, 0, 0);
 		}
 		if (xOpenTime < o_openTime)
 		{
@@ -179,6 +182,8 @@ bool checkAInBMoving(float dt, AABB* a, Vector2 aVel, AABB* b, Vector2 bVel, flo
 		if (yCloseTime > o_closeTime)
 		{
 			o_closeTime = yCloseTime;
+			//Now we want to transform the y-axis instead of x
+			o_closeNormal = b->getToWorldMatrix() * Vector4(0, 1, 0, 0);
 		}
 		if (yOpenTime < o_openTime)
 		{
@@ -187,7 +192,7 @@ bool checkAInBMoving(float dt, AABB* a, Vector2 aVel, AABB* b, Vector2 bVel, flo
 	}
 }
 
-bool AABB::isColliding(float dt, std::shared_ptr<AABB> other)
+bool AABB::isColliding(float dt, std::shared_ptr<AABB> other, float& collisionTime, Vector4& collisionNormal)
 {
 	//Make sure both gameObjects still exist (otherwise we can just return false)
 	//Because weak_ptr.lock() is relatively expensive I should think about finding a way to
@@ -203,11 +208,11 @@ bool AABB::isColliding(float dt, std::shared_ptr<AABB> other)
 			float earliestOpenTime = 1;
 
 			//If either return a separation then we're good
-			if (!checkAInBMoving(dt, this, selfRB->velocity, other.get(), otherRB->velocity, latestCloseTime, earliestOpenTime))
+			if (!checkAInBMoving(dt, this, selfRB->velocity, other.get(), otherRB->velocity, latestCloseTime, earliestOpenTime, collisionNormal))
 			{
 				return false;
 			}
-			if (!checkAInBMoving(dt, other.get(), otherRB->velocity, this, selfRB->velocity, latestCloseTime, earliestOpenTime))
+			if (!checkAInBMoving(dt, other.get(), otherRB->velocity, this, selfRB->velocity, latestCloseTime, earliestOpenTime, collisionNormal))
 			{
 				return false;
 			}
@@ -217,25 +222,13 @@ bool AABB::isColliding(float dt, std::shared_ptr<AABB> other)
 			//If the latest close time was after the earliest open time then a new separation opened before the last one closed, which means no collision
 			//If the latest close time was before the earliest open time then all the separations closed before any other separations could open - collision
 			//By default this is true, and that's by design. If both have 0 velocity and neither check returns false then it must be true.
-			return latestCloseTime < earliestOpenTime;
+			if (latestCloseTime < earliestOpenTime)
+			{
+				collisionTime = latestCloseTime;
+				return true;
+			}
+			return false;
 		}
 	}
 	return false;
-}
-
-Matrix4 AABB::getToWorldMatrix()
-{
-	if (auto selfObject = gameObject.lock())
-	{
-		//This assumes column vectors
-		Matrix4 translation = Matrix4::CreateTranslation(selfObject->position.x, selfObject->position.y);
-		Matrix4 rotation = Matrix4::CreateZRotation(selfObject->orientation);
-		return translation * rotation;
-	}
-	return Matrix4::CreateIdentity();
-}
-
-Matrix4 AABB::getToLocalMatrix()
-{
-	return getToWorldMatrix().GetInverse();
 }

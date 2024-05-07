@@ -20,10 +20,8 @@ namespace Renderer
 
 		for (int i = 0; i < renderables.size(); i++)
 		{
-			//renderables[i]->draw();
 			if (std::shared_ptr<Renderable> renderable = renderables[i].lock())
 			{
-				std::cout << renderable->sprite << std::endl;
 				renderable->draw();
 			}
 		}

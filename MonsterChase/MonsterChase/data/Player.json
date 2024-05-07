@@ -1,6 +1,7 @@
 {
   "name": "Player",
-  "position": [ 0, 50 ],
+  "position": [ 0, 0 ],
+  "orientation": 0,
   "controller": {
     "type": "player",
     "initializer": {
@@ -12,7 +13,7 @@
       "sprite_file": "sprites\\goodguy.dds"
     },
     "rigidbody": {
-      "maxSpeed": 100,
+      "maxSpeed": 0,
       "maxRotation": 100
     },
     "physicsComponent": {
@@ -20,7 +21,8 @@
     },
     "AABB": {
       "center": [ 0, 0 ],
-      "extents":  [ 44, 82 ]
+      "extents": [ 44, 82 ],
+      "type": "blocking"
     }
   }
 }

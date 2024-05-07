@@ -100,19 +100,19 @@ Matrix4 Matrix4::CreateScale(float i_scaleX, float i_scaleY, float i_scaleZ)
 Matrix4 Matrix4::CreateXRotation(float i_RotationRadians)
 {
     return Matrix4(
-        1, 0,                       0,                      0,
-        0, cos(i_RotationRadians),  sin(i_RotationRadians), 0,
-        0, -sin(i_RotationRadians), cos(i_RotationRadians), 0,
-        0, 0,                       0,                      1);
+        1, 0,                       0,                       0,
+        0, cos(i_RotationRadians),  -sin(i_RotationRadians), 0,
+        0, sin(i_RotationRadians),  cos(i_RotationRadians),  0,
+        0, 0,                       0,                       1);
 }
 
 Matrix4 Matrix4::CreateYRotation(float i_RotationRadians)
 {
     return Matrix4(
-        cos(i_RotationRadians), 0, -sin(i_RotationRadians), 0,
-        0,                      1, 0,                       0,
-        sin(i_RotationRadians), 0, cos(i_RotationRadians),  0,
-        0,                      0, 0,                       1);
+        cos(i_RotationRadians),  0, sin(i_RotationRadians),  0,
+        0,                       1, 0,                       0,
+        -sin(i_RotationRadians), 0, cos(i_RotationRadians),  0,
+        0,                       0, 0,                       1);
 }
 
 Matrix4 Matrix4::CreateZRotation(float i_RotationRadians)

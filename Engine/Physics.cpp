@@ -32,14 +32,22 @@ namespace Physics
 
 		float maxSpeed = rb->maxSpeed;
 		float maxRotation = rb->maxRotation;
+		float mass = rb->mass;
 		if (rbSection["maxSpeed"].is_number())
 		{
 			maxSpeed = rbSection["maxSpeed"];
 		}
 		if (rbSection["maxRotation"].is_number())
 		{
-			maxSpeed = rbSection["maxRotation"];
+			maxRotation = rbSection["maxRotation"];
 		}
+		if (rbSection["mass"].is_number())
+		{
+			mass = rbSection["mass"];
+		}
+		rb->maxSpeed = maxSpeed;
+		rb->maxRotation = maxRotation;
+		rb->mass = mass;
 	}
 
 	void addPhysicsObject(std::shared_ptr<GameObject> gameObject, nlohmann::json& physicsSection)

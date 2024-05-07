@@ -128,20 +128,22 @@ void collisionUnitTest()
 	
 	rb1->velocity = Vector2(1, 0);
 	rb2->velocity = Vector2(-1, 0);
+	float collisionTime = 1;
+	Vector4 collisionNormal = Vector4();
 	//Super simple check, both moving and they're colliding
-	assert(aabb1->isColliding(1, aabb2));
+	assert(aabb1->isColliding(1, aabb2, collisionTime, collisionNormal));
 	//They won't collide yet in this one
-	assert(!aabb1->isColliding(1, aabb3));
+	assert(!aabb1->isColliding(1, aabb3, collisionTime, collisionNormal));
 	//They won't end the frame colliding, but they start by colliding so it's true
-	assert(aabb1->isColliding(1, aabb4));
+	assert(aabb1->isColliding(1, aabb4, collisionTime, collisionNormal));
 
 	rb5->velocity = Vector2(-1, -1);
 	//Collide in the middle of the frame (corners hitting)
-	assert(aabb5->isColliding(1, aabb6));
+	assert(aabb5->isColliding(1, aabb6, collisionTime, collisionNormal));
 	//Rotate by roughly pi/4 radians or 45 degrees so that it will miss instead of tapping corners
 	//This doesn't figure out until the last Y axis check that it isn't colliding. 
-	test5->orientation = .785;
-	assert(!aabb5->isColliding(1, aabb6));
+	test5->orientation = -45;
+	assert(!aabb5->isColliding(1, aabb6, collisionTime, collisionNormal));
 }
 
 void startTick()
@@ -177,8 +179,6 @@ void setup()
 
 int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
-	
-
 	bool bSuccess = Renderer::initialize(i_hInstance, i_nCmdShow);
 	Physics::initialize();
 	Collision::initialize();
@@ -206,7 +206,8 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 				player->update(dt);
 				player2->update(dt);
 
-				Physics::update(dt);
+				//Physics::update(dt);
+				//Because collisions need to work closely with physics, Physics::update will happen inside of Collision::update
 				Collision::update(dt);
 				
 				Renderer::render();
@@ -217,6 +218,8 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 		Renderer::shutdown();
 	}
 
+	//TODO: Use the profiler to fix memory leaks.
+	//I was mixed up on how the output of this shows up and thought I'd been doing fine, but there's several
 	_CrtDumpMemoryLeaks();
 #if defined _DEBUG
 	_CrtDumpMemoryLeaks();

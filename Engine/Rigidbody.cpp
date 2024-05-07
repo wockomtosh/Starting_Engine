@@ -38,7 +38,7 @@ void Rigidbody::update(float dt, Acceleration acceleration)
 
 float Rigidbody::getOrientationOfMovement()
 {
-	float oMovement = atan2(velocity.y, velocity.x) * (180 / 3.1415);
+	float oMovement = Orientation::radToDeg(atan2(velocity.y, velocity.x));
 	//This function gives 0 orientation as pointing to the right, so we need to offset that properly.
 	oMovement += 90;
 

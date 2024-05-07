@@ -15,4 +15,14 @@ namespace Orientation {
 
 		return i_orientation;
 	}
+
+	inline float degToRad(float i_orientationDeg)
+	{
+		return i_orientationDeg * (3.1415 / 180);
+	}
+
+	inline float radToDeg(float i_orientationRad)
+	{
+		return i_orientationRad * (180 / 3.1415);
+	}
 }

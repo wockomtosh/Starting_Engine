@@ -24,6 +24,7 @@ struct Rigidbody {
 	float rotation = 0;
 	float maxSpeed = 100;
 	float maxRotation = 100;
+	float mass = 1;
 
 	Rigidbody() {}
 	Rigidbody(std::weak_ptr<GameObject> i_gameObject);

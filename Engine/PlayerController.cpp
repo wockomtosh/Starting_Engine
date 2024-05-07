@@ -3,7 +3,7 @@
 PlayerController::PlayerController(std::weak_ptr<GameObject> player) :
 	player(player), playerPhysics(std::weak_ptr<PhysicsComponent>())
 {
-	
+	std::static_pointer_cast<Rigidbody>(player.lock()->getComponent("rigidbody"))->velocity = Vector2(-50, 50);
 }
 
 PlayerController::PlayerController(const PlayerController& other)
@@ -15,31 +15,31 @@ PlayerController::PlayerController(const PlayerController& other)
 float timer = 0;
 void PlayerController::update(float dt, GameObject& controlledObject)
 {
-	if (auto pPhysics = playerPhysics.lock())
-	{
-		if (timer < 3)
-		{
-			pPhysics->forces.linear += Vector2::Left * 10;
-		}
-		else {
-			pPhysics->forces.linear -= Vector2::Left * 10;
-		}
-		timer += dt;
+	//if (auto pPhysics = playerPhysics.lock())
+	//{
+	//	if (timer < 4)
+	//	{
+	//		pPhysics->forces.linear += Vector2::Left * 10;
+	//	}
+	//	else {
+	//		pPhysics->forces.linear -= Vector2::Left * 10;
+	//	}
+	//	timer += dt;
 
-		if (timer > 6)
-		{
-			timer = 0;
-		}
+	//	if (timer > 8)
+	//	{
+	//		timer = 0;
+	//	}
 
-		if (pPhysics->forces.linear.x > 100)
-		{
-			pPhysics->forces.linear.x = 100;
-		}
-		if (pPhysics->forces.linear.x < -100)
-		{
-			pPhysics->forces.linear.x = -100;
-		}
-	}
+	//	if (pPhysics->forces.linear.x > 100)
+	//	{
+	//		pPhysics->forces.linear.x = 100;
+	//	}
+	//	if (pPhysics->forces.linear.x < -100)
+	//	{
+	//		pPhysics->forces.linear.x = -100;
+	//	}
+	//}
 }
 
 void PlayerController::createPlayerController(std::shared_ptr<GameObject> gameObject, nlohmann::json& initializerSection)

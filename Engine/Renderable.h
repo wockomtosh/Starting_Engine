@@ -2,6 +2,7 @@
 #include <memory>
 #include "GameObject.h"
 #include "GLib.h"
+#include "Orientation.h"
 
 struct Renderable {
 	std::weak_ptr<GameObject> gameObject;
@@ -26,10 +27,14 @@ struct Renderable {
 		GLib::Release(sprite);
 	}
 
+	//TODO: There's something weird with how the sprites get rotated compared to the AABBs
+	//I think sprites get rotated around their base and AABBs are rotated around their center
 	inline void draw() {
 		if (auto object = gameObject.lock())
 		{
-			GLib::Render(*sprite, { object->position.x, object->position.y }, 0.0f, object->orientation);
+			//GLib uses radians and also rotates counterclockwise -_-
+			//It also rotates around things weirdly, idk it's just janky -_-
+			GLib::Render(*sprite, { object->position.x, object->position.y }, 0.0f, -Orientation::degToRad(object->orientation));
 		}
 	}
 };
