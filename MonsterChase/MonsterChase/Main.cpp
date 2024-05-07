@@ -18,133 +18,17 @@
 #include "Renderer.h"
 #include "Collision.h"
 #include "PlayerController.h"
+#include "BallController.h"
 #include "Matrix4.h"
 #include "Vector4.h"
 
 std::shared_ptr<GameObject> player;
 std::shared_ptr<GameObject> player2;
+std::shared_ptr<GameObject> ball;
+std::shared_ptr<GameObject> topBarrier;
+std::shared_ptr<GameObject> bottomBarrier;
 float prevTime = 0;
 float dt = 0.0167;
-
-void matrixUnitTest()
-{
-	//Test matrix creation: visual check only
-	Matrix4::CreateIdentity().print();
-	std::cout << std::endl;
-	Matrix4::CreateScale(2, 2, 2).print();
-	std::cout << std::endl;
-	Matrix4::CreateTranslation(1, 2, 3).print();
-	std::cout << std::endl;
-	Matrix4::CreateXRotation(3.14).print();
-	std::cout << std::endl;
-	Matrix4::CreateYRotation(3.14).print();
-	std::cout << std::endl;
-	Matrix4::CreateZRotation(3.14).print();
-	std::cout << std::endl;
-
-	//Test matrix multiplication
-	Matrix4 rotTransComp = Matrix4::CreateTranslation(1, 2, 3) * Matrix4::CreateXRotation(3.1415 / 4);
-	assert(rotTransComp.Row(2) == Vector4(0, 0.707123, 0.70709, 2));
-	rotTransComp.print();
-	std::cout << std::endl;
-
-	//Test inverse and transpose
-	Matrix4 tempMat = rotTransComp.GetInverse();
-	assert(tempMat.Row(3) == Vector4(0, 0.70709, 0.707123, -3.53555));
-	tempMat.print();
-	std::cout << std::endl;
-	tempMat = rotTransComp.GetInverseRotTrans();
-	assert(tempMat.Row(3) == Vector4(0, 0.70709, 0.707123, -3.53555));
-	tempMat.print();
-	std::cout << std::endl;
-
-	Matrix4 testingMatrix = Matrix4(
-		1, 3, 3, 4,
-		5, 2, 7, 8,
-		9, 5, 6, 8,
-		4, 7, 7, 1);
-	testingMatrix.print();
-	std::cout << std::endl;
-	testingMatrix = testingMatrix.GetInverse();
-	testingMatrix.print();
-	assert(testingMatrix.Row(2) == Vector4(0.27362, -0.214724, 0.0736196, 0.0343558));
-	std::cout << std::endl;
-	//Answer to ^ checked using https://www.emathhelp.net/en/calculators/linear-algebra/inverse-of-matrix-calculator/?i=%5B%5B1%2C3%2C3%2C4%5D%2C%5B5%2C2%2C7%2C8%5D%2C%5B9%2C5%2C6%2C8%5D%2C%5B4%2C7%2C7%2C1%5D%5D&m=a
-
-	rotTransComp.GetTranspose().print();
-	std::cout << std::endl;
-
-	//Test matrix-vector multiplication
-	Vector4 testCoordinate = Vector4(0, 0, 0, 1);
-	Vector4 testCoordinate2 = Vector4(1, 1, 1, 1);
-
-	Vector4 temp = rotTransComp * testCoordinate;
-	assert(temp == Vector4(1, 2, 3, 1));
-	temp.print();
-	std::cout << std::endl;
-	std::cout << std::endl;
-	temp = testCoordinate * rotTransComp;
-	assert(temp == Vector4(0, 0, 0, 1));
-	temp.print();
-	std::cout << std::endl;
-	std::cout << std::endl;
-
-	temp = rotTransComp * testCoordinate2;
-	assert(temp == Vector4(2, 3.41421, 3.00003, 1));
-	temp.print();
-	std::cout << std::endl;
-	std::cout << std::endl;
-	temp = testCoordinate2 * rotTransComp;
-	assert(temp == Vector4(1, 3.27826e-05, 1.41421, 7));
-	temp.print();
-	std::cout << std::endl;
-	std::cout << std::endl;
-}
-
-void collisionUnitTest()
-{
-	std::shared_ptr<GameObject> test1 = GameObjectFactory::CreateGameObject("data\\TestAABB1.json");
-	std::shared_ptr<GameObject> test2 = GameObjectFactory::CreateGameObject("data\\TestAABB2.json");
-	std::shared_ptr<GameObject> test3 = GameObjectFactory::CreateGameObject("data\\TestAABB3.json");
-	std::shared_ptr<GameObject> test4 = GameObjectFactory::CreateGameObject("data\\TestAABB4.json");
-	std::shared_ptr<GameObject> test5 = GameObjectFactory::CreateGameObject("data\\TestAABB5.json");
-	std::shared_ptr<GameObject> test6 = GameObjectFactory::CreateGameObject("data\\TestAABB6.json");
-
-	std::shared_ptr<Rigidbody> rb1 = std::static_pointer_cast<Rigidbody>(test1->getComponent("rigidbody"));
-	std::shared_ptr<Rigidbody> rb2 = std::static_pointer_cast<Rigidbody>(test2->getComponent("rigidbody"));
-	std::shared_ptr<Rigidbody> rb3 = std::static_pointer_cast<Rigidbody>(test3->getComponent("rigidbody"));
-	std::shared_ptr<Rigidbody> rb4 = std::static_pointer_cast<Rigidbody>(test4->getComponent("rigidbody"));
-	std::shared_ptr<Rigidbody> rb5 = std::static_pointer_cast<Rigidbody>(test5->getComponent("rigidbody"));
-	std::shared_ptr<Rigidbody> rb6 = std::static_pointer_cast<Rigidbody>(test6->getComponent("rigidbody"));
-
-	std::shared_ptr<AABB> aabb1 = std::static_pointer_cast<AABB>(test1->getComponent("AABB"));
-	std::shared_ptr<AABB> aabb2 = std::static_pointer_cast<AABB>(test2->getComponent("AABB"));
-	std::shared_ptr<AABB> aabb3 = std::static_pointer_cast<AABB>(test3->getComponent("AABB"));
-	std::shared_ptr<AABB> aabb4 = std::static_pointer_cast<AABB>(test4->getComponent("AABB"));
-	std::shared_ptr<AABB> aabb5 = std::static_pointer_cast<AABB>(test5->getComponent("AABB"));
-	std::shared_ptr<AABB> aabb6 = std::static_pointer_cast<AABB>(test6->getComponent("AABB"));
-
-	//I'll be testing with dt=1 to make it easier to design test cases
-	
-	rb1->velocity = Vector2(1, 0);
-	rb2->velocity = Vector2(-1, 0);
-	float collisionTime = 1;
-	Vector4 collisionNormal = Vector4();
-	//Super simple check, both moving and they're colliding
-	assert(aabb1->isColliding(1, aabb2, collisionTime, collisionNormal));
-	//They won't collide yet in this one
-	assert(!aabb1->isColliding(1, aabb3, collisionTime, collisionNormal));
-	//They won't end the frame colliding, but they start by colliding so it's true
-	assert(aabb1->isColliding(1, aabb4, collisionTime, collisionNormal));
-
-	rb5->velocity = Vector2(-1, -1);
-	//Collide in the middle of the frame (corners hitting)
-	assert(aabb5->isColliding(1, aabb6, collisionTime, collisionNormal));
-	//Rotate by roughly pi/4 radians or 45 degrees so that it will miss instead of tapping corners
-	//This doesn't figure out until the last Y axis check that it isn't colliding. 
-	test5->orientation = -45;
-	assert(!aabb5->isColliding(1, aabb6, collisionTime, collisionNormal));
-}
 
 void startTick()
 {
@@ -165,16 +49,77 @@ void getTick()
 	prevTime = static_cast<float>(curTime);
 }
 
-void setupPlayer()
+void setupObjects()
 {
 	player = GameObjectFactory::CreateGameObject("data\\Player.json");
 	player2 = GameObjectFactory::CreateGameObject("data\\Player2.json");
+	ball = GameObjectFactory::CreateGameObject("data\\Ball.json");
+	topBarrier = GameObjectFactory::CreateGameObject("data\\TopBarrier.json");
+	bottomBarrier = GameObjectFactory::CreateGameObject("data\\BottomBarrier.json");
 }
 
 void setup()
 {
 	startTick();
 	getTick();
+}
+
+void handleKeyPress(unsigned int i_VKeyID, bool bWentDown)
+{
+	//Check player 1
+	if (auto pPhysics = std::static_pointer_cast<PhysicsComponent>(player->getComponent("physicsComponent")))
+	{
+		unsigned int w = 0x57;
+		unsigned int s = 0x53;
+
+		if (i_VKeyID == w)
+		{
+			if (bWentDown)
+			{
+				pPhysics->forces.linear += Vector2::Up * 1000;
+			}
+			else {
+				pPhysics->forces.linear -= Vector2::Up * 1000;
+			}
+		}
+		if (i_VKeyID == s)
+		{
+			if (bWentDown)
+			{
+				pPhysics->forces.linear += Vector2::Down * 1000;
+			}
+			else {
+				pPhysics->forces.linear -= Vector2::Down * 1000;
+			}
+		}
+	}
+	//Check player 2
+	if (auto pPhysics = std::static_pointer_cast<PhysicsComponent>(player2->getComponent("physicsComponent")))
+	{
+		unsigned int i = 0x49;
+		unsigned int k = 0x4B;
+
+		if (i_VKeyID == i)
+		{
+			if (bWentDown)
+			{
+				pPhysics->forces.linear += Vector2::Up * 1000;
+			}
+			else {
+				pPhysics->forces.linear -= Vector2::Up * 1000;
+			}
+		}
+		if (i_VKeyID == k)
+		{
+			if (bWentDown)
+			{
+				pPhysics->forces.linear += Vector2::Down * 1000;
+			}
+			else {
+				pPhysics->forces.linear -= Vector2::Down * 1000;
+			}
+		}
+	}
 }
 
 int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
@@ -184,8 +129,13 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 	Collision::initialize();
 
 	GameObjectFactory::RegisterControllerCreator("player", &PlayerController::createPlayerController);
+	GameObjectFactory::RegisterControllerCreator("ball", &BallController::createBallController);
 
-	setupPlayer();
+	setupObjects();
+
+	// IMPORTANT (if we want keypress info from GLib): Set a callback for notification of key presses
+	//TODO: Understand std::bind better. 
+	GLib::SetKeyStateChangeCallback(std::bind(&handleKeyPress, std::placeholders::_1, std::placeholders::_2));
 
 	if (bSuccess)
 	{
@@ -206,10 +156,14 @@ int wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLin
 				player->update(dt);
 				player2->update(dt);
 
-				//Physics::update(dt);
+				if (ball->position.x > 512 || ball->position.x < -512)
+				{
+					ball.reset();
+					ball = GameObjectFactory::CreateGameObject("data\\Ball.json");
+				}
+
 				//Because collisions need to work closely with physics, Physics::update will happen inside of Collision::update
 				Collision::update(dt);
-				
 				Renderer::render();
 			}
 		} while (bQuit == false);

@@ -27,6 +27,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BallController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Monster.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BallController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,6 +68,15 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="data\Player2.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\Ball.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\TopBarrier.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\BottomBarrier.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

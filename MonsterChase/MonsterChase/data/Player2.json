@@ -1,6 +1,6 @@
 {
   "name": "Player2",
-  "position": [ 150, -50 ],
+  "position": [ 450, 0 ],
   "orientation": 0,
   "controller": {
     "type": "player",
@@ -17,12 +17,12 @@
       "maxRotation": 100
     },
     "physicsComponent": {
-      "dragFactor": 0
+      "dragFactor": 100
     },
     "AABB": {
       "center": [ 0, 0 ],
       "extents": [ 44, 82 ],
-      "type": "elastic"
+      "type": "blocking"
     }
   }
 }

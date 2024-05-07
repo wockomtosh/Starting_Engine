@@ -3,43 +3,20 @@
 PlayerController::PlayerController(std::weak_ptr<GameObject> player) :
 	player(player), playerPhysics(std::weak_ptr<PhysicsComponent>())
 {
-	std::static_pointer_cast<Rigidbody>(player.lock()->getComponent("rigidbody"))->velocity = Vector2(-50, 50);
+	playerIndex = numPlayers;
+	numPlayers++;
 }
 
 PlayerController::PlayerController(const PlayerController& other)
 {
 	player = other.player;
 	playerPhysics = other.playerPhysics;
+	playerIndex = other.playerIndex;
 }
 
-float timer = 0;
 void PlayerController::update(float dt, GameObject& controlledObject)
 {
-	//if (auto pPhysics = playerPhysics.lock())
-	//{
-	//	if (timer < 4)
-	//	{
-	//		pPhysics->forces.linear += Vector2::Left * 10;
-	//	}
-	//	else {
-	//		pPhysics->forces.linear -= Vector2::Left * 10;
-	//	}
-	//	timer += dt;
 
-	//	if (timer > 8)
-	//	{
-	//		timer = 0;
-	//	}
-
-	//	if (pPhysics->forces.linear.x > 100)
-	//	{
-	//		pPhysics->forces.linear.x = 100;
-	//	}
-	//	if (pPhysics->forces.linear.x < -100)
-	//	{
-	//		pPhysics->forces.linear.x = -100;
-	//	}
-	//}
 }
 
 void PlayerController::createPlayerController(std::shared_ptr<GameObject> gameObject, nlohmann::json& initializerSection)
@@ -56,60 +33,4 @@ void PlayerController::createPlayerController(std::shared_ptr<GameObject> gameOb
 	gameObject->addComponent("physicsComponent", physics);
 	//TODO: fix this!!
 	newController->playerPhysics = physics;
-
-	// IMPORTANT (if we want keypress info from GLib): Set a callback for notification of key presses
-	//TODO: Understand std::bind better. 
-	GLib::SetKeyStateChangeCallback(std::bind(&PlayerController::handleKeyPress, newController, std::placeholders::_1, std::placeholders::_2));
-}
-
-void PlayerController::handleKeyPress(unsigned int i_VKeyID, bool bWentDown)
-{
-	if (auto pPhysics = playerPhysics.lock())
-	{
-		unsigned int w = 0x57;
-		unsigned int a = 0x41;
-		unsigned int s = 0x53;
-		unsigned int d = 0x44;
-
-		if (i_VKeyID == w)
-		{
-			if (bWentDown)
-			{
-				pPhysics->forces.linear += Vector2::Up * 100;
-			}
-			else {
-				pPhysics->forces.linear -= Vector2::Up * 100;
-			}
-		}
-		if (i_VKeyID == a)
-		{
-			if (bWentDown)
-			{
-				pPhysics->forces.linear += Vector2::Left * 100;
-			}
-			else {
-				pPhysics->forces.linear -= Vector2::Left * 100;
-			}
-		}
-		if (i_VKeyID == s)
-		{
-			if (bWentDown)
-			{
-				pPhysics->forces.linear += Vector2::Down * 100;
-			}
-			else {
-				pPhysics->forces.linear -= Vector2::Down * 100;
-			}
-		}
-		if (i_VKeyID == d)
-		{
-			if (bWentDown)
-			{
-				pPhysics->forces.linear += Vector2::Right * 100;
-			}
-			else {
-				pPhysics->forces.linear -= Vector2::Right * 100;
-			}
-		}
-	}
 }

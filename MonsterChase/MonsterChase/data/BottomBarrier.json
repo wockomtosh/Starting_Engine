@@ -1,0 +1,16 @@
+{
+  "name": "BottomBarrier",
+  "position": [ 0, -384 ],
+  "orientation": 0,
+  "components": {
+    "rigidbody": {
+      "maxSpeed": 0,
+      "maxRotation": 0
+    },
+    "AABB": {
+      "center": [ 0, 0 ],
+      "extents": [ 512, 1 ],
+      "type": "blocking"
+    }
+  }
+}

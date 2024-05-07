@@ -1,11 +1,11 @@
 {
-  "name": "Player",
-  "position": [ -450, 0 ],
+  "name": "Ball",
+  "position": [ 0, 0 ],
   "orientation": 0,
   "controller": {
-    "type": "player",
+    "type": "ball",
     "initializer": {
-      "name": "Joe"
+
     }
   },
   "components": {
@@ -13,16 +13,16 @@
       "sprite_file": "sprites\\goodguy.dds"
     },
     "rigidbody": {
-      "maxSpeed": 100,
-      "maxRotation": 100
+      "maxSpeed": 300,
+      "maxRotation": 0
     },
     "physicsComponent": {
-      "dragFactor": 100
+      "dragFactor": 0
     },
     "AABB": {
       "center": [ 0, 0 ],
       "extents": [ 44, 82 ],
-      "type": "blocking"
+      "type": "elastic"
     }
   }
 }

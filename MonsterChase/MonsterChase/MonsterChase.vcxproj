@@ -139,12 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BallController.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterChase.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BallController.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterChase.h" />
     <ClInclude Include="Player.h" />
@@ -155,6 +157,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\Ball.json" />
+    <None Include="data\BottomBarrier.json" />
     <None Include="data\Player.json" />
     <None Include="data\Player2.json" />
     <None Include="data\TestAABB1.json" />
@@ -163,6 +167,7 @@
     <None Include="data\TestAABB4.json" />
     <None Include="data\TestAABB5.json" />
     <None Include="data\TestAABB6.json" />
+    <None Include="data\TopBarrier.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

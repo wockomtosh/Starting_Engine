@@ -6,10 +6,10 @@
 #include "GLib.h"
 #include <functional>
 
+static int numPlayers = 0;
+
 class PlayerController : public GameObjectController 
 {
-	std::weak_ptr<GameObject> player;
-
 public:
 	PlayerController(std::weak_ptr<GameObject> player);
 	PlayerController(const PlayerController& other);
@@ -21,5 +21,7 @@ public:
 private:
 	void handleKeyPress(unsigned int i_VKeyID, bool bWentDown);
 
+	std::weak_ptr<GameObject> player;
 	std::weak_ptr<PhysicsComponent> playerPhysics;
+	int playerIndex;
 };
