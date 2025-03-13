@@ -2,7 +2,7 @@ This is an outward facing repository of a game engine project I completed over t
 In this engine I implemented:
 1. A game object-component system, including controllers and factory methods
 2. Creating and loading game objects using JSON
-3. Elastic and blocking collisions through checking axes of separation and open/close times for those axes
+3. Sweeping elastic and blocking collisions through checking axes of separation and open/close times for those axes
 4. Basic physics using rigidbodies
 
 For graphics and rendering it uses a graphics library called GLib. 
